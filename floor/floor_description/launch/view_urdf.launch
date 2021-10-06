@@ -1,0 +1,18 @@
+<launch>
+    <param name="robot_description"
+        command="$(find xacro)/xacro --inorder '$(find floor_description)/urdf/floor.urdf' " />
+
+    <node name="floor_joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+        <param name="/use_gui" value="true"/>
+            <rosparam param="/source_list">[floor/floor_joint_states]</rosparam>
+    </node>
+
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen">
+        <param name="publish_frequency" type="double" value="30.0" />
+        <param name="ignore_timestamp" type="bool" value="true" />
+    </node>
+
+    <node type="rviz" name="rviz" pkg="rviz" args="-d $(find floor_description)/rviz/floor.rviz" />
+
+</launch>
+

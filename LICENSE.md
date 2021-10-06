@@ -1,2 +1,2 @@
 
-Copyright (C) 2021 dayats saputra
+Copyright (C) 2021 Hidayat Eko Saputro
