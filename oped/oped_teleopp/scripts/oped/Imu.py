@@ -21,9 +21,9 @@ class Imu(object):
 
     
     def filterData(self):
-        self.accel_data_filter[0] = self.accel_data[0] * alpha + (self.accel_data_filter[0] * (1.0 - self.alpha))
-        self.accel_data_filter[1] = self.accel_data[1] * alpha + (self.accel_data_filter[1] * (1.0 - self.alpha))
-        self.accel_data_filter[2] = self.accel_data[2] * alpha + (self.accel_data_filter[2] * (1.0 - self.alpha))
+        self.accel_data_filter[0] = self.accel_data[0] * self.alpha + (self.accel_data_filter[0] * (1.0 - self.alpha))
+        self.accel_data_filter[1] = self.accel_data[1] * self.alpha + (self.accel_data_filter[1] * (1.0 - self.alpha))
+        self.accel_data_filter[2] = self.accel_data[2] * self.alpha + (self.accel_data_filter[2] * (1.0 - self.alpha))
 
     
     def getPitchRoll(self):
