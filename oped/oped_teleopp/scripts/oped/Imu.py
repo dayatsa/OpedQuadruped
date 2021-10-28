@@ -31,6 +31,6 @@ class Imu(object):
         self.filterData()
 
         self.roll  = (math.atan2(-self.accel_data_filter[1], self.accel_data_filter[2])*180.0)/math.pi;
-        self.pitch = (math.atan2(accel_data_filter[0], math.sqrt(self.accel_data_filter[1]*self.accel_data_filter[1] + self.accel_data_filter[2]*self.accel_data_filter[2]))*180.0)/math.pi;
+        self.pitch = (math.atan2(self.accel_data_filter[0], math.sqrt(self.accel_data_filter[1]*self.accel_data_filter[1] + self.accel_data_filter[2]*self.accel_data_filter[2]))*180.0)/math.pi;
 
         return (self.pitch, self.roll)
