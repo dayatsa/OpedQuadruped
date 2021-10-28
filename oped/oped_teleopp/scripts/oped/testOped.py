@@ -17,6 +17,7 @@ def talker():
     while not rospy.is_shutdown():
         pitch, roll = imu.getPitchRoll()
         print("pitch: {}, roll: {}".format(pitch, roll))
+        print("hello world")
 
         # hello_str = "hello world %s" % rospy.get_time()
         # rospy.loginfo(hello_str)
