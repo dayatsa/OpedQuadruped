@@ -67,7 +67,7 @@ class Ax12:
     PROTOCOL_VERSION = 1.0
     BAUDRATE = 1000000  # Dynamixel default baudrate
     DEVICENAME = '/dev/ttyUSB0'  # e.g 'COM3' windows or '/dev/ttyUSB0' for linux
-    DEBUG = True
+    DEBUG = False
 
     def __init__(self, motor_id):
         """Initialize motor with id"""
@@ -351,7 +351,7 @@ class Ax12:
 
     @staticmethod
     def deg2raw(delta_deg):
-        return int(delta_deg*(1023/300))
+        return int(delta_deg*(1023.0/300.0))
 
     @staticmethod
     def print_status(dxl_property, dxl_id, value):

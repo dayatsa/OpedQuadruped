@@ -11,8 +11,7 @@ import random
 import os
 import numpy as np
 from datetime import datetime
-from quadruped_controller import *
-from floor_controller import *
+from QuadrupedController import *
 from collections      import deque
 
 

@@ -15,6 +15,7 @@ catkin_install_python(PROGRAMS
   scripts/quadruped_controller.py 
   scripts/set_action.py 
   scripts/train.py 
+  scripts/engine.py 
   scripts/oped/testOped.py 
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )

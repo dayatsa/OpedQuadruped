@@ -5,23 +5,27 @@ import rospy
 from std_msgs.msg import String
 
 from Imu import *
+from Leg import *
 
 
 imu = Imu()
+oped = Leg()
 
 def talker():
-    # pub = rospy.Publisher('chatter', String, queue_size=10)
+
+
     rospy.init_node('talker', anonymous=True)
     rate = rospy.Rate(10) # 10hz
 
     while not rospy.is_shutdown():
+        # servo.setInitialPosition()
+        # oped.addPosition(0,-1)
+        # oped.setInitialPosition()
+
         pitch, roll = imu.getPitchRoll()
         print("pitch: {}, roll: {}".format(pitch, roll))
-        print("hello world")
+        print()
 
-        # hello_str = "hello world %s" % rospy.get_time()
-        # rospy.loginfo(hello_str)
-        # pub.publish(hello_str)
         rate.sleep()
 
 if __name__ == '__main__':
