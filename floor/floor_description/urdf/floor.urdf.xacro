@@ -11,7 +11,7 @@
   <xacro:property name="height3" value="0.2" /> <!-- Link 3 0.3-->
   <xacro:property name="height4" value="0.05" /> <!-- Link 4 -->
   <xacro:property name="width4" value="2" /> <!-- Link 4 -->
-  <xacro:property name="limit_joint" value="0.26" /> <!-- Limit joint-->
+  <xacro:property name="limit_joint" value="0.52" /> <!-- Limit joint-->
   <xacro:property name="camera_link" value="0.05" /> <!-- Size of square 'camera' box -->
   <xacro:property name="axel_offset" value="0.05" /> <!-- Space btw top of beam and the each joint -->
 

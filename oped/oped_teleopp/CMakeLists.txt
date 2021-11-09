@@ -11,11 +11,11 @@ install(DIRECTORY launch
 
 
 catkin_install_python(PROGRAMS 
-  scripts/floor_controller.py 
-  scripts/quadruped_controller.py 
-  scripts/set_action.py 
-  scripts/train.py 
-  scripts/engine.py 
+  scripts/train/floor_controller.py 
+  scripts/train/quadruped_controller.py 
+  scripts/train/set_action.py 
+  scripts/train/train.py 
+  scripts/train/engine.py 
   scripts/oped/testOped.py 
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
