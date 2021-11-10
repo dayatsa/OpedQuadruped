@@ -19,7 +19,7 @@ from floor_controller import *
 class OpedTrainer:
     def __init__(self):
         self.SAMPLE_BATCH_SIZE = 20
-        self.EPISODES          = 5000
+        self.EPISODES          = 10000
 
         self.oped              = Quadruped()
         self.floor             = Floor()
@@ -53,15 +53,15 @@ class OpedTrainer:
         #     self.set_point_floor_x_adder = np.random.uniform(self.floor.MIN_DEGREE, -5)/self.MAX_EPISODE
         #     self.lift = True
         
-        self.set_point_floor_y_adder = np.random.uniform(self.floor.MIN_DEGREE, self.floor.MAX_DEGREE)/self.MAX_EPISODE
+        # self.set_point_floor_y_adder = np.random.uniform(self.floor.MIN_DEGREE, self.floor.MAX_DEGREE)/self.MAX_EPISODE
 
         # if np.random.rand() <= 0.5:
-        # # if self.lift == True:
-        #     self.set_point_floor_y_adder = np.random.uniform(5, self.floor.MAX_DEGREE)/self.MAX_EPISODE
-        #     self.lift = False
-        # else:
-        #     self.set_point_floor_y_adder = np.random.uniform(self.floor.MIN_DEGREE, -5)/self.MAX_EPISODE
-        #     self.lift = True
+        if self.lift == True:
+            self.set_point_floor_y_adder = np.random.uniform(5, self.floor.MAX_DEGREE)/self.MAX_EPISODE
+            self.lift = False
+        else:
+            self.set_point_floor_y_adder = np.random.uniform(self.floor.MIN_DEGREE, -5)/self.MAX_EPISODE
+            self.lift = True
 
 
     def resetEnvironment(self):
@@ -94,13 +94,13 @@ class OpedTrainer:
                         "end_date":dt_string,
                         "rewards":my_dict}
 
-        path = "/home/dayatsa/model_editor_models/oped/src/oped/oped_teleopp/rewards/y/reward_y_" + dt_string + ".json"
+        path = "/home/dayatsa/data/skipsi/oped_ws/src/OpedQuadruped/oped/oped_teleopp/rewards/y/reward_y_" + dt_string + ".json"
         with open(path, 'w') as fp:
             json.dump(dict_model, fp)
 
 
     def checkRobot(self, state_x, state_y):
-        if (state_x[1] < -5 or state_x[1] > 5 or state_y[1] < -5 or state_y[1] > 5):
+        if (state_x[1] < -10 or state_x[1] > 10 or state_y[1] < -10 or state_y[1] > 10):
             if self.counter_end == 0:
                 self.counter_end += 1 
                 self.last_counter = True
@@ -123,7 +123,7 @@ class OpedTrainer:
                 print("state: ", state_y, state_x)
                 discrete_state_y = self.agent.getDiscreteState(state_y)
                 discrete_state_x = self.agent.getDiscreteState(state_x)
-                print("disecrete_state: ", discrete_state_y, discrete_state_x)
+                # print("disecrete_state: ", discrete_state_y, discrete_state_x)
 
                 self.checkRobot(state_x, state_y)
 
@@ -132,21 +132,32 @@ class OpedTrainer:
                     episode_reward = 0
                     index = 0 
                     while not done:
+                    # while True:
+                        """ action y:
+                            0: imu 0
+                            1: imu minus -26.77
+                            2: imu plus 26.77
+                            action x:
+                            0: imu 0
+                            1: imu minus -28.9348
+                        """
                         action_y = self.agent.action(discrete_state_y, is_y=True)
                         # action_x = self.agent.action(discrete_state_x, is_y=False)
-                        # action_y = 0
+                        # action_y = 1
                         action_x = 0
 
                         next_state_y, next_state_x, reward_y, reward_x, done = self.oped.step(action_y, action_x)
                         new_discrete_state_y = self.agent.getDiscreteState(next_state_y)
-                        # new_discrete_state_x = self.agent.getDiscreteState(next_state_x)
+                        new_discrete_state_x = self.agent.getDiscreteState(next_state_x)
                         episode_reward = episode_reward + reward_y #+ reward_y
 
-                        if index < 450 :
-                            self.floorStep()
+                        # if index < 450 :
+                        self.floorStep()
                         # print(next_state_y, action_y, reward_y)
                         # print("sx:[{:.2f}, {:.2f}], sy:[{:.2f}, {:.2f}], ax:{}, ay:{}, rx:{:.2f}, ry:{:.2f}".format(
                         #     next_state_x[0], next_state_x[1], next_state_y[0], next_state_y[1], action_x, action_y, reward_x, reward_y))
+                        # print(self.oped.getInfo())
+                        # print(self.floor_position_y)
                         index += 1
                         if not done:
                             self.agent.updateModel(discrete_state_y, new_discrete_state_y, action_y, reward_y, is_y=True)
@@ -154,11 +165,12 @@ class OpedTrainer:
                         
                         rate.sleep()    
                         discrete_state_y = new_discrete_state_y
-                        # discrete_state_x = new_discrete_state_x
+                        discrete_state_x = new_discrete_state_x
                     
                     self.agent.updateExplorationRate(index_episode)
                     print("Episode {}, index: {}, # Reward: {}".format(index_episode, index, episode_reward))
                     print("Exploration: {}, x: {}, y: {}".format(self.agent.exploration_rate, self.floor_position_x, self.floor_position_y))
+                    print("Oped: {}".format(self.oped.getImuData()))
                 
                     ep_rewards.append(episode_reward)
                     if not index_episode % self.STATS_EVERY:
@@ -191,6 +203,6 @@ class OpedTrainer:
 
 if __name__ == "__main__":
     rospy.init_node('train', anonymous=True)
-    rate = rospy.Rate(100) # 
+    rate = rospy.Rate(50) # 
     oped_agent = OpedTrainer()
     oped_agent.run()
