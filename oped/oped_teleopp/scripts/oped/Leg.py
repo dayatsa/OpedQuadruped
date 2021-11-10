@@ -9,7 +9,7 @@ class Leg(ServoController):
         self.MIN_DEGREE = -11.4592
         # self.MAX_DEGREE = 68.7549 #57.2958
         self.MAX_DEGREE = 97.4 #57.2958
-        self.MOVE_STEP = 0.29
+        self.MOVE_STEP = 0.58
         self.MIDDLE_POSITION = 42.975
 
         self.lf = 0.0

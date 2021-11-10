@@ -58,6 +58,8 @@ ADDR_AX_LOCK = 47
 ADDR_AX_PUNCH_L = 48
 ADDR_AX_PUNCH_H = 49
 
+LEN_AX_GOAL_POSITION       = 4
+
 
 class Ax12:
     """ Class for Dynamixel AX12A motors.
@@ -72,6 +74,7 @@ class Ax12:
     def __init__(self, motor_id):
         """Initialize motor with id"""
         self.id = motor_id
+        self.groupSyncWrite = GroupSyncWrite(Ax12.portHandler, Ax12.packetHandler, ADDR_AX_GOAL_POSITION_L, LEN_AX_GOAL_POSITION)
 
     def __repr__(self):
         return "Ax12('{}')".format(self.id)
@@ -89,15 +92,37 @@ class Ax12:
         return reg_data
 
     def set_register2(self, reg_num, reg_value):
-        dxl_comm_result, dxl_error = Ax12.packetHandler.write2ByteTxRx(
-            Ax12.portHandler, self.id, reg_num, reg_value)
-        Ax12.check_error(dxl_comm_result, dxl_error)
+        for idx in self.id:
+            dxl_comm_result, dxl_error = Ax12.packetHandler.write2ByteTxRx(
+                Ax12.portHandler, idx, reg_num, reg_value)
+            # print(idx)
+            Ax12.check_error(dxl_comm_result, dxl_error)
 
     def get_register2(self, reg_num_low):
-        reg_data, dxl_comm_result, dxl_error = Ax12.packetHandler.read2ByteTxRx(
-            Ax12.portHandler, self.id, reg_num_low)
-        Ax12.check_error(dxl_comm_result, dxl_error)
+        for idx in self.id:
+            reg_data, dxl_comm_result, dxl_error = Ax12.packetHandler.read2ByteTxRx(
+                Ax12.portHandler, idx, reg_num_low)
+            Ax12.check_error(dxl_comm_result, dxl_error)
         return reg_data
+
+    
+    def syncWriteJoints(self, dxl_goal_position):
+        for i in range(12):
+            param_goal_position = [DXL_LOBYTE(DXL_LOWORD(dxl_goal_position[i])), DXL_HIBYTE(DXL_LOWORD(dxl_goal_position[i])), DXL_LOBYTE(DXL_HIWORD(dxl_goal_position[i])), DXL_HIBYTE(DXL_HIWORD(dxl_goal_position[i]))]
+            dxl_addparam_result = self.groupSyncWrite.addParam(self.id[i], param_goal_position)
+            if dxl_addparam_result != True:
+                print("[ID:%02d] groupSyncWrite addparam failed" % (i))
+
+        dxl_comm_result = self.groupSyncWrite.txPacket()
+        if dxl_comm_result != COMM_SUCCESS:
+            print("Failed: %s" % Ax12.packetHandler.getTxRxResult(dxl_comm_result)) 
+        else:
+            print("SyncWrite Succeeded")
+            
+        self.groupSyncWrite.clearParam()
+        # time.sleep(0.2)
+        # print("SyncWrite Succeeded")
+
 
     # functions for Read-Only registers
     def get_model_number(self):
