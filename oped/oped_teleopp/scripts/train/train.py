@@ -36,7 +36,7 @@ class OpedTrainer:
         self.dt_start_string   = self.now.strftime("%d-%m-%Y_%H:%M")
         self.last_counter      = False
         self.counter_end       = 0
-        self.max_avg_reward    = 12000
+        self.max_avg_reward    = 500
         self.lift              = False
 
     
@@ -94,7 +94,7 @@ class OpedTrainer:
                         "end_date":dt_string,
                         "rewards":my_dict}
 
-        path = "/home/dayatsa/data/skipsi/oped_ws/src/OpedQuadruped/oped/oped_teleopp/rewards/y/reward_y_" + dt_string + ".json"
+        path = "/home/dayatsa/data/skipsi/opedd_ws/src/OpedQuadruped/oped/oped_teleopp/rewards/y/reward_y_" + dt_string + ".json"
         with open(path, 'w') as fp:
             json.dump(dict_model, fp)
 

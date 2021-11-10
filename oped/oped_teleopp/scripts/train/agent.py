@@ -18,14 +18,14 @@ from collections      import deque
 
 class Agent():
     def __init__(self, state_size, action_size, episodes):
-        self.is_weight_backup   = False
-        self.WEIGHT_BACKUP      = "/home/dayatsa/data/skipsi/oped_ws/src/OpedQuadruped/oped/oped_teleopp/model/"
-        self.WEIGHT_LOAD_Y      = "/home/dayatsa/data/skipsi/oped_ws/src/OpedQuadruped/oped/oped_teleopp/model/y/model_y_09-11-2021_19:30.npy"
-        self.WEIGHT_LOAD_X      = "/home/dayatsa/data/skipsi/oped_ws/src/OpedQuadruped/oped/oped_teleopp/model/y/model_y_08-11-2021_10:36.npy"
+        self.is_weight_backup   = True
+        self.WEIGHT_BACKUP      = "/home/dayatsa/data/skipsi/opedd_ws/src/OpedQuadruped/oped/oped_teleopp/model/"
+        self.WEIGHT_LOAD_Y      = "/home/dayatsa/data/skipsi/opedd_ws/src/OpedQuadruped/oped/oped_teleopp/model/y/model_y_10-11-2021_17:32.npy"
+        self.WEIGHT_LOAD_X      = "/home/dayatsa/data/skipsi/opedd_ws/src/OpedQuadruped/oped/oped_teleopp/model/y/model_y_10-11-2021_04:10.npy"
         self.STATE_SIZE         = state_size
         self.ACTION_SIZE        = action_size
         self.LEARNING_RATE      = 0.1
-        self.GAMMA              = 0.995
+        self.GAMMA              = 0.95
         self.EXPLORATION_MIN    = 0.1
         self.START_EXPLORATION_DECAY = 1
         self.END_EXPLORATION_DECAY = episodes//2
@@ -51,11 +51,11 @@ class Agent():
             print("\n\n================LOADING Q-TABLE===============\n\n")
             print(directory)
             q_table = np.load(directory)
-            """ 08-11-2021 17:31
-                254 573 330 525 680 1840 370 145
+            """ 10-11-2021 04:10
+                1130 340 375 615 280 205
             """
             # self.END_EXPLORATION_DECAY = 560
-            self.exploration_rate = 0.3
+            self.exploration_rate = 0.41069179836
             # self.exploration_rate = self.EXPLORATION_MIN
         print(q_table.shape)
         return q_table
