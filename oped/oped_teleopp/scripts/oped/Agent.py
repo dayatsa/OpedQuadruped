@@ -18,9 +18,9 @@ from collections      import deque
 class Agent():
     def __init__(self, state_size, action_size, episodes):
         self.is_weight_backup   = True
-        self.WEIGHT_BACKUP      = "/home/dayatsa/model_editor_models/oped/src/oped/oped_teleopp/model/"
-        self.WEIGHT_LOAD_Y      = "/home/dayatsa/model_editor_models/oped/src/oped/oped_teleopp/model/y/model_y_16-09-2021_07:26.npy"
-        self.WEIGHT_LOAD_X      = "/home/dayatsa/model_editor_models/oped/src/oped/oped_teleopp/model/x/model_x_19-09-2021_07:50.npy"
+        self.WEIGHT_BACKUP      = "/home/pi/oped_ws/src/OpedQuadruped/oped/oped_teleopp/model/"
+        self.WEIGHT_LOAD_Y      = "/home/pi/oped_ws/src/OpedQuadruped/oped/oped_teleopp/model/y/model_y_16-09-2021_07:26.npy"
+        self.WEIGHT_LOAD_X      = "/home/pi/oped_ws/src/OpedQuadruped/oped/oped_teleopp/model/x/model_x_19-09-2021_07:50.npy"
         self.STATE_SIZE         = state_size
         self.ACTION_SIZE        = action_size
         self.LEARNING_RATE      = 0.1

@@ -11,8 +11,8 @@ import os
 import numpy as np
 import json
 from datetime import datetime
-from oped import Agent
-from oped.QuadrupedController import *
+from Agent import *
+from QuadrupedController import *
 
 
 class OpedEngine:
@@ -37,7 +37,7 @@ class OpedEngine:
 
     def resetEnvironment(self):
         # rospy.sleep(0.2)
-        self.oped.setInitialPosition()
+        # self.oped.setInitialPosition()
         rospy.sleep(0.3)
         return self.oped.getStateY(), self.oped.getStateX()
 
@@ -55,7 +55,7 @@ class OpedEngine:
                         "end_date":dt_string,
                         "rewards":my_dict}
 
-        path = "/home/dayatsa/model_editor_models/oped/src/oped/oped_teleopp/rewards/y/reward_y_" + dt_string + ".json"
+        path = "/home/pi/oped_ws/src/OpedQuadruped/oped/oped_teleopp/rewards/y/reward_y_" + dt_string + ".json"
         with open(path, 'w') as fp:
             json.dump(dict_model, fp)
 
@@ -80,7 +80,7 @@ class OpedEngine:
             for index_episode in range(self.EPISODES):
                 print()
                 # print("Reset Environment")
-                # state_y, state_x = self.resetEnvironment()
+                state_y, state_x = self.resetEnvironment()
                 # print("state: ", state_y, state_x)
                 discrete_state_y = self.agent.getDiscreteState(state_y)
                 discrete_state_x = self.agent.getDiscreteState(state_x)
@@ -88,7 +88,8 @@ class OpedEngine:
 
                 self.checkRobot(state_x, state_y)
 
-                if self.counter_end <= 5:
+                # if self.counter_end <= 5:
+                if True:
                     done = False
                     episode_reward = 0
                     index = 0 
@@ -103,8 +104,8 @@ class OpedEngine:
                         new_discrete_state_x = self.agent.getDiscreteState(next_state_x)
                         episode_reward = episode_reward + reward_x + reward_y
 
-                        if index < 450 :
-                            self.floorStep()
+                        # if index < 450 :
+                        #     self.floorStep()
                         # print(next_state_y, action_y, reward_y)
                         print("sx:[{:.2f}, {:.2f}], sy:[{:.2f}, {:.2f}], ax:{}, ay:{}, rx:{:.2f}, ry:{:.2f}".format(
                             next_state_x[0], next_state_x[1], next_state_y[0], next_state_y[1], action_x, action_y, reward_x, reward_y))
@@ -116,10 +117,12 @@ class OpedEngine:
                         rate.sleep()    
                         discrete_state_y = new_discrete_state_y
                         discrete_state_x = new_discrete_state_x
+
+                        done = False
                     
                     self.agent.updateExplorationRate(index_episode)
                     print("Episode {}, index: {}, # Reward: {}".format(index_episode, index, episode_reward))
-                    print("Exploration: {}, x: {}, y: {}".format(self.agent.exploration_rate, self.floor_position_x, self.floor_position_y))
+                    print("Exploration: {}".format(self.agent.exploration_rate))
                 
                     ep_rewards.append(episode_reward)
                     if not index_episode % self.STATS_EVERY:
@@ -140,18 +143,26 @@ class OpedEngine:
                     break
 
         finally:
-            self.agent.saveModel()
-            self.saveRewardValue(aggr_ep_rewards)
+            pass
+            # self.agent.saveModel()
+            # self.saveRewardValue(aggr_ep_rewards)
 
-            plt.plot(aggr_ep_rewards['ep'], aggr_ep_rewards['avg'], label="average rewards")
-            plt.plot(aggr_ep_rewards['ep'], aggr_ep_rewards['max'], label="max rewards")
-            plt.plot(aggr_ep_rewards['ep'], aggr_ep_rewards['min'], label="min rewards")
-            plt.legend(loc=4)
-            plt.show()
+            # plt.plot(aggr_ep_rewards['ep'], aggr_ep_rewards['avg'], label="average rewards")
+            # plt.plot(aggr_ep_rewards['ep'], aggr_ep_rewards['max'], label="max rewards")
+            # plt.plot(aggr_ep_rewards['ep'], aggr_ep_rewards['min'], label="min rewards")
+            # plt.legend(loc=4)
+            # plt.show()
 
 
 if __name__ == "__main__":
-    rospy.init_node('train', anonymous=True)
+    print(os.getcwd())
+    rospy.init_node('engine', anonymous=True)
     rate = rospy.Rate(100) # 
     oped_agent = OpedEngine()
     oped_agent.run()
+
+    oped = QuadrupedController()
+    while True: 
+        oped.addPosition(1,0)
+        # print(oped.getImuData())
+        rate.sleep()

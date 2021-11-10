@@ -20,6 +20,10 @@ class Imu(object):
         self.error_estimation = [2.0, 2.0]
         self.kalman_gain = [0.0, 0.0]
 
+        self.LIMIT_UPRIGHT = 0.5
+        self.IMU_MIN_DEGREE = -10
+        self.IMU_MAX_DEGREE = 10
+
 
     def getAccelData(self):
         data = self.mpu.get_accel_data()
@@ -67,5 +71,5 @@ class Imu(object):
 
 
     def getImuData(self):
-        pitch, roll = self.getPitchRoll
+        pitch, roll = self.getPitchRoll()
         return roll, pitch, 0

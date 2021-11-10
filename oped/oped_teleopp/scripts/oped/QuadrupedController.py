@@ -1,8 +1,9 @@
 import __future__
+import rospy
 from Imu import *
 from Leg import *
 
-class Quadruped(Leg, MyImu) : 
+class QuadrupedController(Leg, Imu) : 
     def __init__(self):
         self.x = 0.0
         self.y = 0.0
@@ -13,7 +14,7 @@ class Quadruped(Leg, MyImu) :
         self.MAX_EPISODE = 500
         self.episode_step = 0
         Leg.__init__(self)
-        MyImu.__init__(self)
+        Imu.__init__(self)
 
 
     def __str__(self):
@@ -48,6 +49,8 @@ class Quadruped(Leg, MyImu) :
         new_state_imu = self.getImuData()
         y = new_state_imu[1]
         x = new_state_imu[0]
+
+        print(new_state_imu)
 
         #reward
         reward_y = 0
