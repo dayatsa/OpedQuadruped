@@ -30,6 +30,10 @@ class OpedTrainer:
         self.agent             = Agent(self.STATE_SPACE, self.ACTION_SIZE, self.EPISODES)        
         self.floor_position_x  = 0
         self.floor_position_y  = 0
+        self.set_point_floor_x  = 0
+        self.set_point_floor_y  = 0
+        self.resudial_floor_x  = 0
+        self.resudial_floor_y  = 0
         self.set_point_floor_x_adder = 0
         self.set_point_floor_y_adder = 0
         self.now               = datetime.now()
@@ -57,11 +61,17 @@ class OpedTrainer:
 
         # if np.random.rand() <= 0.5:
         if self.lift == True:
-            self.set_point_floor_y_adder = np.random.uniform(5, self.floor.MAX_DEGREE)/self.MAX_EPISODE
+            self.set_point_floor_y = np.random.uniform(1.0, 20.0)
+            self.set_point_floor_y_adder = 1.0
+            self.resudial_floor_y = self.set_point_floor_y % 1
             self.lift = False
         else:
-            self.set_point_floor_y_adder = np.random.uniform(self.floor.MIN_DEGREE, -5)/self.MAX_EPISODE
+            self.set_point_floor_y = -np.random.uniform(1.0, 20.0)
+            self.resudial_floor_y = -((-self.set_point_floor_y) % 1)
+            self.set_point_floor_y_adder = -1.0
             self.lift = True
+        
+        print("set_point_floor x: {:.3f}, y: {:.3f}".format(self.set_point_floor_x, self.set_point_floor_y))
 
 
     def resetEnvironment(self):
@@ -71,16 +81,37 @@ class OpedTrainer:
         rospy.sleep(0.3)
         self.oped.resetWorld()
         rospy.sleep(0.5)
+        state_y, state_x = self.oped.getStateY(), self.oped.getStateX()
         self.getFloorSetPoint()
-        return self.oped.getStateY(), self.oped.getStateX()
+        rospy.sleep(0.3)
+        self.floorStep()
+        return state_y, state_x
 
     
     def floorStep(self):
-        self.floor.setPosition(self.floor_position_y, self.floor_position_x)
-        self.floor_position_x += self.set_point_floor_x_adder
-        self.floor_position_y += self.set_point_floor_y_adder
+        # while(True):
+            # self.floor.setPosition(self.floor_position_y, self.floor_position_x)
+            # self.floor_position_x += self.set_point_floor_x_adder
+            # rospy.sleep(0.05)
+            # if self.floor_position_x >= self.set_point_floor_x:
+            #     self.floor_position_x += self.resudial_floor_x
+            #     self.floor.setPosition(self.floor_position_y, self.floor_position_x)
+            #     rospy.sleep(0.05)
+            #     break
 
+        while (True):
+            self.floor.setPosition(self.floor_position_y, self.floor_position_x)
+            self.floor_position_y += self.set_point_floor_y_adder
+            rospy.sleep(0.05)
+            if self.set_point_floor_y > 0 and self.floor_position_y >= self.set_point_floor_y or self.set_point_floor_y < 0 and self.floor_position_y <= self.set_point_floor_y:
+                self.floor_position_y -= self.set_point_floor_y_adder
+                self.floor_position_y += self.resudial_floor_y
+                self.floor.setPosition(self.floor_position_y, self.floor_position_x)
+                rospy.sleep(0.05)
+                print("floor x: {:.3f}, y: {:.3f}".format(self.floor_position_x, self.floor_position_y))
+                break
     
+
     def saveRewardValue(self, my_dict):
         self.now = datetime.now()
         dt_string = self.now.strftime("%d-%m-%Y_%H:%M")
@@ -120,7 +151,8 @@ class OpedTrainer:
                 print()
                 # print("Reset Environment")
                 state_y, state_x = self.resetEnvironment()
-                print("state: ", state_y, state_x)
+                print("init state: {}, {}".format(state_x, state_y))
+                print("start state: {}, {}".format(self.oped.getStateX(), self.oped.getStateY()))
                 discrete_state_y = self.agent.getDiscreteState(state_y)
                 discrete_state_x = self.agent.getDiscreteState(state_x)
                 # print("disecrete_state: ", discrete_state_y, discrete_state_x)
@@ -152,7 +184,7 @@ class OpedTrainer:
                         episode_reward = episode_reward + reward_y #+ reward_y
 
                         # if index < 450 :
-                        self.floorStep()
+                        # self.floorStep()
                         # print(next_state_y, action_y, reward_y)
                         # print("sx:[{:.2f}, {:.2f}], sy:[{:.2f}, {:.2f}], ax:{}, ay:{}, rx:{:.2f}, ry:{:.2f}".format(
                         #     next_state_x[0], next_state_x[1], next_state_y[0], next_state_y[1], action_x, action_y, reward_x, reward_y))
@@ -168,9 +200,9 @@ class OpedTrainer:
                         discrete_state_x = new_discrete_state_x
                     
                     self.agent.updateExplorationRate(index_episode)
+                    print("finish state: {}, {}".format(self.oped.getStateX(), self.oped.getStateY()))
                     print("Episode {}, index: {}, # Reward: {}".format(index_episode, index, episode_reward))
-                    print("Exploration: {}, x: {}, y: {}".format(self.agent.exploration_rate, self.floor_position_x, self.floor_position_y))
-                    print("Oped: {}".format(self.oped.getImuData()))
+                    print("Exploration: {}, x: {:.3f}, y: {:.3f}".format(self.agent.exploration_rate, self.floor_position_x, self.floor_position_y))
                 
                     ep_rewards.append(episode_reward)
                     if not index_episode % self.STATS_EVERY:

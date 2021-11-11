@@ -20,8 +20,8 @@ class MyImu(object):
         self.orientation_z = 0
         self.DEG_PER_RAD = 57.29577951
         self.LIMIT_UPRIGHT = 1
-        self.IMU_MIN_DEGREE = -35
-        self.IMU_MAX_DEGREE = 35
+        self.IMU_MIN_DEGREE = -30
+        self.IMU_MAX_DEGREE = 30
         imu_subsriber = rospy.Subscriber("/imu_oped/data", Imu, self.imuCallback)
 
 

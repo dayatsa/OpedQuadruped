@@ -18,7 +18,7 @@ from collections      import deque
 
 class Agent():
     def __init__(self, state_size, action_size, episodes):
-        self.is_weight_backup   = True
+        self.is_weight_backup   = False
         self.WEIGHT_BACKUP      = "/home/dayatsa/data/skipsi/opedd_ws/src/OpedQuadruped/oped/oped_teleopp/model/"
         self.WEIGHT_LOAD_Y      = "/home/dayatsa/data/skipsi/opedd_ws/src/OpedQuadruped/oped/oped_teleopp/model/y/model_y_10-11-2021_17:32.npy"
         self.WEIGHT_LOAD_X      = "/home/dayatsa/data/skipsi/opedd_ws/src/OpedQuadruped/oped/oped_teleopp/model/y/model_y_10-11-2021_04:10.npy"
@@ -27,15 +27,15 @@ class Agent():
         self.LEARNING_RATE      = 0.1
         self.GAMMA              = 0.95
         self.EXPLORATION_MIN    = 0.1
-        self.START_EXPLORATION_DECAY = 1
-        self.END_EXPLORATION_DECAY = episodes//2
+        self.START_EXPLORATION_DECAY = 4000
+        self.END_EXPLORATION_DECAY = 9000
         self.EXPLORATION_DECAY  = 1.0/float(self.END_EXPLORATION_DECAY - self.START_EXPLORATION_DECAY)
         print("Exploration decay: {} , {} , {}".format(self.START_EXPLORATION_DECAY, self.END_EXPLORATION_DECAY, self.EXPLORATION_DECAY))
         self.exploration_rate   = 1.0
-        self.DISCRETE_OS_SIZE   = [188, 70]
-        self.DISCRETE_OS_SIZE_Q   = [189, 71]
+        self.DISCRETE_OS_SIZE   = [188, 60]
+        self.DISCRETE_OS_SIZE_Q   = [189, 61]
         self.MAX_LEG_STATE        = 54.23
-        self.MAX_IMU_STATE        = 35.0
+        self.MAX_IMU_STATE        = 30.0
         self.observation_space_high = np.array([self.MAX_LEG_STATE, self.MAX_IMU_STATE])
         self.observation_space_low = np.array([-self.MAX_LEG_STATE, -self.MAX_IMU_STATE])
         self.discrete_os_win_size = (self.observation_space_high - self.observation_space_low)/self.DISCRETE_OS_SIZE
@@ -73,6 +73,7 @@ class Agent():
             state[1] = -self.MAX_IMU_STATE
 
         discrete_state = (state - self.observation_space_low)/self.discrete_os_win_size
+        discrete_state[0] = 0
         return tuple(discrete_state.astype(np.int))
 
 
