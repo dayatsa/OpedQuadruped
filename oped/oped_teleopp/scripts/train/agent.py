@@ -18,17 +18,17 @@ from collections      import deque
 
 class Agent():
     def __init__(self, state_size, action_size, episodes):
-        self.is_weight_backup   = False
+        self.is_weight_backup   = True
         self.WEIGHT_BACKUP      = "/home/dayatsa/data/skipsi/opedd_ws/src/OpedQuadruped/oped/oped_teleopp/model/"
-        self.WEIGHT_LOAD_Y      = "/home/dayatsa/data/skipsi/opedd_ws/src/OpedQuadruped/oped/oped_teleopp/model/y/model_y_10-11-2021_17:32.npy"
-        self.WEIGHT_LOAD_X      = "/home/dayatsa/data/skipsi/opedd_ws/src/OpedQuadruped/oped/oped_teleopp/model/y/model_y_10-11-2021_04:10.npy"
+        self.WEIGHT_LOAD_Y      = "/home/dayatsa/data/skipsi/opedd_ws/src/OpedQuadruped/oped/oped_teleopp/model/y/model_y_13-11-2021_10:33.npy"
+        self.WEIGHT_LOAD_X      = "/home/dayatsa/data/skipsi/opedd_ws/src/OpedQuadruped/oped/oped_teleopp/model/y/model_y_12-11-2021_03:45.npy"
         self.STATE_SIZE         = state_size
         self.ACTION_SIZE        = action_size
         self.LEARNING_RATE      = 0.1
         self.GAMMA              = 0.95
         self.EXPLORATION_MIN    = 0.1
-        self.START_EXPLORATION_DECAY = 4000
-        self.END_EXPLORATION_DECAY = 9000
+        self.START_EXPLORATION_DECAY = 1
+        self.END_EXPLORATION_DECAY = 5000
         self.EXPLORATION_DECAY  = 1.0/float(self.END_EXPLORATION_DECAY - self.START_EXPLORATION_DECAY)
         print("Exploration decay: {} , {} , {}".format(self.START_EXPLORATION_DECAY, self.END_EXPLORATION_DECAY, self.EXPLORATION_DECAY))
         self.exploration_rate   = 1.0
@@ -51,12 +51,18 @@ class Agent():
             print("\n\n================LOADING Q-TABLE===============\n\n")
             print(directory)
             q_table = np.load(directory)
-            """ 10-11-2021 04:10
-                1130 340 375 615 280 205
+            """ 12-11-2021 03:45
+                12-11-2021 12:31
+                12-11-2021 14:54
+                12-11-2021 17:01
+                13-11-2021 07:28
+                13-11-2021 10:33
+
+                4000 1300 200 500 1940 800
             """
             # self.END_EXPLORATION_DECAY = 560
-            self.exploration_rate = 0.41069179836
-            # self.exploration_rate = self.EXPLORATION_MIN
+            # self.exploration_rate = 0.2119142
+            self.exploration_rate = self.EXPLORATION_MIN
         print(q_table.shape)
         return q_table
     

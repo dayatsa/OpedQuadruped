@@ -71,7 +71,7 @@ class OpedTrainer:
             self.set_point_floor_y_adder = -1.0
             self.lift = True
         
-        print("set_point_floor x: {:.3f}, y: {:.3f}".format(self.set_point_floor_x, self.set_point_floor_y))
+        # print("set_point_floor x: {:.3f}, y: {:.3f}".format(self.set_point_floor_x, self.set_point_floor_y))
 
 
     def resetEnvironment(self):
@@ -108,7 +108,7 @@ class OpedTrainer:
                 self.floor_position_y += self.resudial_floor_y
                 self.floor.setPosition(self.floor_position_y, self.floor_position_x)
                 rospy.sleep(0.05)
-                print("floor x: {:.3f}, y: {:.3f}".format(self.floor_position_x, self.floor_position_y))
+                # print("floor x: {:.3f}, y: {:.3f}".format(self.floor_position_x, self.floor_position_y))
                 break
     
 
