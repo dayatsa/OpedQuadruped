@@ -40,7 +40,7 @@ class OpedTrainer:
         self.dt_start_string   = self.now.strftime("%d-%m-%Y_%H:%M")
         self.last_counter      = False
         self.counter_end       = 0
-        self.max_avg_reward    = 500
+        self.max_avg_reward    = 1500
         self.lift              = False
 
     
@@ -50,26 +50,28 @@ class OpedTrainer:
 
 
         # if np.random.rand() <= 0.5:
-        # # if self.lift == True:
-        #     self.set_point_floor_x_adder = np.random.uniform(5, self.floor.MAX_DEGREE)/self.MAX_EPISODE
-        #     self.lift = False
-        # else:
-        #     self.set_point_floor_x_adder = np.random.uniform(self.floor.MIN_DEGREE, -5)/self.MAX_EPISODE
-        #     self.lift = True
-        
-        # self.set_point_floor_y_adder = np.random.uniform(self.floor.MIN_DEGREE, self.floor.MAX_DEGREE)/self.MAX_EPISODE
-
-        # if np.random.rand() <= 0.5:
         if self.lift == True:
-            self.set_point_floor_y = np.random.uniform(1.0, 20.0)
-            self.set_point_floor_y_adder = 1.0
-            self.resudial_floor_y = self.set_point_floor_y % 1
+            self.set_point_floor_x = np.random.uniform(1.0, 20.0)
+            self.set_point_floor_x_adder = 1.0
+            self.resudial_floor_x = self.set_point_floor_x % 1
             self.lift = False
         else:
-            self.set_point_floor_y = -np.random.uniform(1.0, 20.0)
-            self.resudial_floor_y = -((-self.set_point_floor_y) % 1)
-            self.set_point_floor_y_adder = -1.0
+            self.set_point_floor_x = -np.random.uniform(1.0, 20.0)
+            self.resudial_floor_x = -((-self.set_point_floor_x) % 1)
+            self.set_point_floor_x_adder = -1.0
             self.lift = True
+
+        # if np.random.rand() <= 0.5:
+        # if self.lift == True:
+        #     self.set_point_floor_y = np.random.uniform(5.0, 20.0)
+        #     self.set_point_floor_y_adder = 1.0
+        #     self.resudial_floor_y = self.set_point_floor_y % 1
+        #     self.lift = False
+        # else:
+        #     self.set_point_floor_y = -np.random.uniform(5.0, 20.0)
+        #     self.resudial_floor_y = -((-self.set_point_floor_y) % 1)
+        #     self.set_point_floor_y_adder = -1.0
+        #     self.lift = True
         
         # print("set_point_floor x: {:.3f}, y: {:.3f}".format(self.set_point_floor_x, self.set_point_floor_y))
 
@@ -88,28 +90,30 @@ class OpedTrainer:
         return state_y, state_x
 
     
-    def floorStep(self):
-        # while(True):
-            # self.floor.setPosition(self.floor_position_y, self.floor_position_x)
-            # self.floor_position_x += self.set_point_floor_x_adder
-            # rospy.sleep(0.05)
-            # if self.floor_position_x >= self.set_point_floor_x:
-            #     self.floor_position_x += self.resudial_floor_x
-            #     self.floor.setPosition(self.floor_position_y, self.floor_position_x)
-            #     rospy.sleep(0.05)
-            #     break
-
+    def floorStep(self):        
         while (True):
             self.floor.setPosition(self.floor_position_y, self.floor_position_x)
-            self.floor_position_y += self.set_point_floor_y_adder
+            self.floor_position_x += self.set_point_floor_x_adder
             rospy.sleep(0.05)
-            if self.set_point_floor_y > 0 and self.floor_position_y >= self.set_point_floor_y or self.set_point_floor_y < 0 and self.floor_position_y <= self.set_point_floor_y:
-                self.floor_position_y -= self.set_point_floor_y_adder
-                self.floor_position_y += self.resudial_floor_y
+            if self.set_point_floor_x > 0 and self.floor_position_x >= self.set_point_floor_x or self.set_point_floor_x < 0 and self.floor_position_x <= self.set_point_floor_x:
+                self.floor_position_x -= self.set_point_floor_x_adder
+                self.floor_position_x += self.resudial_floor_x
                 self.floor.setPosition(self.floor_position_y, self.floor_position_x)
                 rospy.sleep(0.05)
                 # print("floor x: {:.3f}, y: {:.3f}".format(self.floor_position_x, self.floor_position_y))
                 break
+
+        # while (True):
+        #     self.floor.setPosition(self.floor_position_y, self.floor_position_x)
+        #     self.floor_position_y += self.set_point_floor_y_adder
+        #     rospy.sleep(0.05)
+        #     if self.set_point_floor_y > 0 and self.floor_position_y >= self.set_point_floor_y or self.set_point_floor_y < 0 and self.floor_position_y <= self.set_point_floor_y:
+        #         self.floor_position_y -= self.set_point_floor_y_adder
+        #         self.floor_position_y += self.resudial_floor_y
+        #         self.floor.setPosition(self.floor_position_y, self.floor_position_x)
+        #         rospy.sleep(0.05)
+        #         # print("floor x: {:.3f}, y: {:.3f}".format(self.floor_position_x, self.floor_position_y))
+        #         break
     
 
     def saveRewardValue(self, my_dict):
@@ -125,13 +129,13 @@ class OpedTrainer:
                         "end_date":dt_string,
                         "rewards":my_dict}
 
-        path = "/home/dayatsa/data/skipsi/opedd_ws/src/OpedQuadruped/oped/oped_teleopp/rewards/y/reward_y_" + dt_string + ".json"
+        path = "/home/dayatsa/data/skipsi/opedd_ws/src/OpedQuadruped/oped/oped_teleopp/rewards/x/reward_x_" + dt_string + ".json"
         with open(path, 'w') as fp:
             json.dump(dict_model, fp)
 
 
     def checkRobot(self, state_x, state_y):
-        if (state_x[1] < -10 or state_x[1] > 10 or state_y[1] < -10 or state_y[1] > 10):
+        if (state_x[1] < -5 or state_x[1] > 5 or state_y[1] < -5 or state_y[1] > 5):
             if self.counter_end == 0:
                 self.counter_end += 1 
                 self.last_counter = True
@@ -173,15 +177,15 @@ class OpedTrainer:
                             0: imu 0
                             1: imu minus -28.9348
                         """
-                        action_y = self.agent.action(discrete_state_y, is_y=True)
-                        # action_x = self.agent.action(discrete_state_x, is_y=False)
-                        # action_y = 1
-                        action_x = 0
+                        # action_y = self.agent.action(discrete_state_y, is_y=True)
+                        action_x = self.agent.action(discrete_state_x, is_y=False)
+                        action_y = 0
+                        # action_x = 0
 
                         next_state_y, next_state_x, reward_y, reward_x, done = self.oped.step(action_y, action_x)
                         new_discrete_state_y = self.agent.getDiscreteState(next_state_y)
                         new_discrete_state_x = self.agent.getDiscreteState(next_state_x)
-                        episode_reward = episode_reward + reward_y #+ reward_y
+                        episode_reward = episode_reward + reward_x #+ reward_y
 
                         # if index < 450 :
                         # self.floorStep()
@@ -192,8 +196,8 @@ class OpedTrainer:
                         # print(self.floor_position_y)
                         index += 1
                         if not done:
-                            self.agent.updateModel(discrete_state_y, new_discrete_state_y, action_y, reward_y, is_y=True)
-                            # self.agent.updateModel(discrete_state_x, new_discrete_state_x, action_x, reward_x, is_y=False)
+                            # self.agent.updateModel(discrete_state_y, new_discrete_state_y, action_y, reward_y, is_y=True)
+                            self.agent.updateModel(discrete_state_x, new_discrete_state_x, action_x, reward_x, is_y=False)
                         
                         rate.sleep()    
                         discrete_state_y = new_discrete_state_y

@@ -18,17 +18,17 @@ from collections      import deque
 
 class Agent():
     def __init__(self, state_size, action_size, episodes):
-        self.is_weight_backup   = True
+        self.is_weight_backup   = False
         self.WEIGHT_BACKUP      = "/home/dayatsa/data/skipsi/opedd_ws/src/OpedQuadruped/oped/oped_teleopp/model/"
-        self.WEIGHT_LOAD_Y      = "/home/dayatsa/data/skipsi/opedd_ws/src/OpedQuadruped/oped/oped_teleopp/model/y/model_y_13-11-2021_10:33.npy"
-        self.WEIGHT_LOAD_X      = "/home/dayatsa/data/skipsi/opedd_ws/src/OpedQuadruped/oped/oped_teleopp/model/y/model_y_12-11-2021_03:45.npy"
+        self.WEIGHT_LOAD_Y      = "/home/dayatsa/data/skipsi/opedd_ws/src/OpedQuadruped/oped/oped_teleopp/model/y/model_y_13-11-2021_18:39.npy"
+        self.WEIGHT_LOAD_X      = "/home/dayatsa/data/skipsi/opedd_ws/src/OpedQuadruped/oped/oped_teleopp/model/x/model_x_15-11-2021_13:27.npy"
         self.STATE_SIZE         = state_size
         self.ACTION_SIZE        = action_size
         self.LEARNING_RATE      = 0.1
         self.GAMMA              = 0.95
         self.EXPLORATION_MIN    = 0.1
-        self.START_EXPLORATION_DECAY = 1
-        self.END_EXPLORATION_DECAY = 5000
+        self.START_EXPLORATION_DECAY = 4000
+        self.END_EXPLORATION_DECAY = 9000
         self.EXPLORATION_DECAY  = 1.0/float(self.END_EXPLORATION_DECAY - self.START_EXPLORATION_DECAY)
         print("Exploration decay: {} , {} , {}".format(self.START_EXPLORATION_DECAY, self.END_EXPLORATION_DECAY, self.EXPLORATION_DECAY))
         self.exploration_rate   = 1.0
@@ -59,10 +59,22 @@ class Agent():
                 13-11-2021 10:33
 
                 4000 1300 200 500 1940 800
+            
+                13-11-2021 12:23
+                13-11-2021 13:36
+                13-11-2021 16:55
+                13-11-2021 18:39
+                14-11-2021 05:35
+
+                x========
+                2600
+                15-11-2021 13:27
+
+
             """
             # self.END_EXPLORATION_DECAY = 560
-            # self.exploration_rate = 0.2119142
-            self.exploration_rate = self.EXPLORATION_MIN
+            # self.exploration_rate = 0.34498449845
+            # self.exploration_rate = self.EXPLORATION_MIN
         print(q_table.shape)
         return q_table
     
@@ -86,8 +98,8 @@ class Agent():
     def saveModel(self):
         now = datetime.now()
         dt_string = now.strftime("%d-%m-%Y_%H:%M")
-        np.save(self.WEIGHT_BACKUP + "y/model_y_" + dt_string + ".npy", self.q_table_y)
-        # np.save(self.WEIGHT_BACKUP + "x/model_x_" + dt_string + ".npy", self.q_table_x)
+        # np.save(self.WEIGHT_BACKUP + "y/model_y_" + dt_string + ".npy", self.q_table_y)
+        np.save(self.WEIGHT_BACKUP + "x/model_x_" + dt_string + ".npy", self.q_table_x)
 
 
     def action(self, state, is_y):
