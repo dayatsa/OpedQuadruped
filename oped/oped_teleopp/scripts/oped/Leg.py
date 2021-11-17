@@ -18,6 +18,8 @@ class Leg(ServoController):
         self.rh = 0.0
         self.leg_y = 0.0
         self.leg_x = 0.0
+        self.last_leg_y = 0.0
+        self.last_leg_x = 0.0
         self.last_lf = 0.0
         self.last_lh = 0.0
         self.last_rf = 0.0
@@ -55,6 +57,8 @@ class Leg(ServoController):
             self.lh = self.last_lh
             self.rf = self.last_rf
             self.rh = self.last_rh
+            # self.leg_y = self.last_leg_y
+            # self.leg_x = self.last_leg_x
 
         if self.lf > self.MAX_DEGREE:
             self.lf = self.MAX_DEGREE
@@ -78,6 +82,8 @@ class Leg(ServoController):
         self.last_lh = self.lh
         self.last_rf = self.rf
         self.last_rh = self.rh
+        self.last_leg_y = self.leg_y
+        self.last_leg_x = self.leg_x
         # print(self.lf, self.lh, self.rf, self.rh)
         self.setPosition(self.lf, self.lh, self.rf, self.rh)
 

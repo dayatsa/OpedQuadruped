@@ -40,9 +40,9 @@ class QuadrupedController(Leg, Imu) :
         if choice2 == 0:
             step_x = 0
         elif choice2 == 1:
-            step_x = -1
-        elif choice2 == 2:
             step_x = 1
+        elif choice2 == 2:
+            step_x = -1
 
         self.addPosition(step_y, step_x)  
 
@@ -57,20 +57,20 @@ class QuadrupedController(Leg, Imu) :
         reward_x = 0
 
         if y > -self.LIMIT_UPRIGHT and y < self.LIMIT_UPRIGHT:
-            reward_y += 100
-        else:
-            if y < 0:
-                reward_y += y
-            else:
-                reward_y -= y
+            reward_y += 10
+        # else:
+        #     if y < 0:
+        #         reward_y += y
+        #     else:
+        #         reward_y -= y
         
         if x > -self.LIMIT_UPRIGHT and x < self.LIMIT_UPRIGHT:
-            reward_x += 100
-        else:
-            if x < 0:
-                reward_x += x
-            else:
-                reward_x -= x
+            reward_x += 10
+        # else:
+        #     if x < 0:
+        #         reward_x += x
+        #     else:
+        #         reward_x -= x
 
         done = False
         if (x < self.IMU_MIN_DEGREE or x > self.IMU_MAX_DEGREE):

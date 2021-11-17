@@ -19,8 +19,8 @@ class Agent():
     def __init__(self, state_size, action_size, episodes):
         self.is_weight_backup   = True
         self.WEIGHT_BACKUP      = "/home/pi/oped_ws/src/OpedQuadruped/oped/oped_teleopp/model/"
-        self.WEIGHT_LOAD_Y      = "/home/pi/oped_ws/src/OpedQuadruped/oped/oped_teleopp/model/y/model_y_16-09-2021_07:26.npy"
-        self.WEIGHT_LOAD_X      = "/home/pi/oped_ws/src/OpedQuadruped/oped/oped_teleopp/model/x/model_x_19-09-2021_07:50.npy"
+        self.WEIGHT_LOAD_Y      = "/home/pi/oped_ws/src/OpedQuadruped/oped/oped_teleopp/model/y/model_y_14-11-2021_04:33.npy"
+        self.WEIGHT_LOAD_X      = "/home/pi/oped_ws/src/OpedQuadruped/oped/oped_teleopp/model/x/model_x_17-11-2021_11:56.npy"
         self.STATE_SIZE         = state_size
         self.ACTION_SIZE        = action_size
         self.LEARNING_RATE      = 0.1
@@ -31,11 +31,13 @@ class Agent():
         self.EXPLORATION_DECAY  = 1.0/float(self.END_EXPLORATION_DECAY - self.START_EXPLORATION_DECAY)
         print("Exploration decay: {} , {} , {}".format(self.START_EXPLORATION_DECAY, self.END_EXPLORATION_DECAY, self.EXPLORATION_DECAY))
         self.exploration_rate   = 1.0
-        self.DISCRETE_OS_SIZE   = [374, 150]
-        self.DISCRETE_OS_SIZE_Q   = [375, 151]
+        self.DISCRETE_OS_SIZE   = [188, 60]
+        self.DISCRETE_OS_SIZE_Q   = [189, 61]
         self.MAX_LEG_STATE        = 54.23
-        self.observation_space_high = np.array([self.MAX_LEG_STATE, 15.0])
-        self.observation_space_low = np.array([-self.MAX_LEG_STATE, -15.0])
+        self.MAX_IMU_STATE        = 30.0
+        self.MAX_IMU              = 20.0
+        self.observation_space_high = np.array([self.MAX_LEG_STATE, self.MAX_IMU_STATE])
+        self.observation_space_low = np.array([-self.MAX_LEG_STATE, -self.MAX_IMU_STATE])
         self.discrete_os_win_size = (self.observation_space_high - self.observation_space_low)/self.DISCRETE_OS_SIZE
         print("Discrete: ", self.discrete_os_win_size)
         self.q_table_y            = self.buildModel(self.WEIGHT_LOAD_Y)
@@ -62,12 +64,16 @@ class Agent():
         elif (state[0] < -self.MAX_LEG_STATE):
             state[0] = -self.MAX_LEG_STATE
 
-        if (state[1] > 15.0):
-            state[1] = 15.0
-        elif (state[1] < -15.0):
-            state[1] = -15.0
+        if (state[1] > self.MAX_IMU):
+            state[1] = self.MAX_IMU
+        elif (state[1] < -self.MAX_IMU):
+            state[1] = -self.MAX_IMU
+
+        # print(state)    
 
         discrete_state = (state - self.observation_space_low)/self.discrete_os_win_size
+        discrete_state[0] = 0
+        # print(discrete_state)   
         return tuple(discrete_state.astype(np.int))
 
 

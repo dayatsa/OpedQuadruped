@@ -21,8 +21,8 @@ class Imu(object):
         self.kalman_gain = [0.0, 0.0]
 
         self.LIMIT_UPRIGHT = 0.5
-        self.IMU_MIN_DEGREE = -10
-        self.IMU_MAX_DEGREE = 10
+        self.IMU_MIN_DEGREE = -35
+        self.IMU_MAX_DEGREE = 35
 
 
     def getAccelData(self):

@@ -109,7 +109,7 @@ class OpedEngine:
                         # print(next_state_y, action_y, reward_y)
                         print("sx:[{:.2f}, {:.2f}], sy:[{:.2f}, {:.2f}], ax:{}, ay:{}, rx:{:.2f}, ry:{:.2f}".format(
                             next_state_x[0], next_state_x[1], next_state_y[0], next_state_y[1], action_x, action_y, reward_x, reward_y))
-                        index += 1
+                        # index += 1
                         # if not done:
                         #     self.agent.updateModel(discrete_state_y, new_discrete_state_y, action_y, reward_y, is_y=True)
                             # self.agent.updateModel(discrete_state_x, new_discrete_state_x, action_x, reward_x, is_y=False)
@@ -134,8 +134,8 @@ class OpedEngine:
                         print("Episode: {}, average reward: {}, cur_max: {}".format(index_episode, average_reward, self.max_avg_reward))
                         ep_rewards = []
                         if(average_reward > self.max_avg_reward):
-                            self.agent.saveModel()
-                            self.saveRewardValue(aggr_ep_rewards)
+                            # self.agent.saveModel()
+                            # self.saveRewardValue(aggr_ep_rewards)
                             self.max_avg_reward = average_reward
 
                 else:
@@ -157,7 +157,7 @@ class OpedEngine:
 if __name__ == "__main__":
     print(os.getcwd())
     rospy.init_node('engine', anonymous=True)
-    rate = rospy.Rate(100) # 
+    rate = rospy.Rate(25) # 
     oped_agent = OpedEngine()
     oped_agent.run()
 
