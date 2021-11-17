@@ -20,8 +20,8 @@ class MyImu(object):
         self.orientation_z = 0
         self.DEG_PER_RAD = 57.29577951
         self.LIMIT_UPRIGHT = 1
-        self.IMU_MIN_DEGREE = -35
-        self.IMU_MAX_DEGREE = 35
+        self.IMU_MIN_DEGREE = -30
+        self.IMU_MAX_DEGREE = 30
         imu_subsriber = rospy.Subscriber("/imu_oped/data", Imu, self.imuCallback)
 
 
@@ -220,20 +220,20 @@ class Quadruped(Leg, MyImu) :
         reward_x = 0
 
         if y > -self.LIMIT_UPRIGHT and y < self.LIMIT_UPRIGHT:
-            reward_y += 100
-        else:
-            if y < 0:
-                reward_y += y
-            else:
-                reward_y -= y
+            reward_y += 10
+        # else:
+        #     if y < 0:
+        #         reward_y += y
+        #     else:
+        #         reward_y -= y
         
         if x > -self.LIMIT_UPRIGHT and x < self.LIMIT_UPRIGHT:
-            reward_x += 100
-        else:
-            if x < 0:
-                reward_x += x
-            else:
-                reward_x -= x
+            reward_x += 10
+        # else:
+        #     if x < 0:
+        #         reward_x += x
+        #     else:
+        #         reward_x -= x
 
         done = False
         if (x < self.IMU_MIN_DEGREE or x > self.IMU_MAX_DEGREE):

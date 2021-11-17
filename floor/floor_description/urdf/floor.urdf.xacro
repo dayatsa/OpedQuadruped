@@ -138,6 +138,15 @@
   </joint>
 
 
+
+      <!-- <surface>
+        <friction>
+          <ode>
+            <mu>1</mu>
+            <mu2>1</mu2>
+          </ode>
+        </friction>
+      </surface> -->
     <!-- Base Link -->
   <link name="link4">
     <collision>
@@ -164,6 +173,16 @@
         izz="${mass / 12.0 * (width4*width4 + width4*width4)}"/>
     </inertial>
   </link>
+
+  <gazebo reference="link4">
+    <kp>1000000.0</kp>
+    <kd>1.0</kd>
+    <mu1>0.9</mu1>
+    <mu2>0.9</mu2>
+    <maxVel>0.0</maxVel>
+    <minDepth>0.001</minDepth>
+    <material>Gazebo/Orange</material>
+  </gazebo>
 
   <link name="imu_link">
     <inertial>
