@@ -40,7 +40,7 @@ class OpedTrainer:
         self.dt_start_string   = self.now.strftime("%d-%m-%Y_%H:%M")
         self.last_counter      = False
         self.counter_end       = 0
-        self.max_avg_reward    = 1500
+        self.max_avg_reward    = 1000
         self.lift              = False
 
     
@@ -91,7 +91,7 @@ class OpedTrainer:
 
     
     def floorStep(self):        
-        while (True):
+        while (self.set_point_floor_x != 0):
             self.floor.setPosition(self.floor_position_y, self.floor_position_x)
             self.floor_position_x += self.set_point_floor_x_adder
             rospy.sleep(0.05)
@@ -103,17 +103,17 @@ class OpedTrainer:
                 # print("floor x: {:.3f}, y: {:.3f}".format(self.floor_position_x, self.floor_position_y))
                 break
 
-        # while (True):
-        #     self.floor.setPosition(self.floor_position_y, self.floor_position_x)
-        #     self.floor_position_y += self.set_point_floor_y_adder
-        #     rospy.sleep(0.05)
-        #     if self.set_point_floor_y > 0 and self.floor_position_y >= self.set_point_floor_y or self.set_point_floor_y < 0 and self.floor_position_y <= self.set_point_floor_y:
-        #         self.floor_position_y -= self.set_point_floor_y_adder
-        #         self.floor_position_y += self.resudial_floor_y
-        #         self.floor.setPosition(self.floor_position_y, self.floor_position_x)
-        #         rospy.sleep(0.05)
-        #         # print("floor x: {:.3f}, y: {:.3f}".format(self.floor_position_x, self.floor_position_y))
-        #         break
+        while (self.set_point_floor_y != 0):
+            self.floor.setPosition(self.floor_position_y, self.floor_position_x)
+            self.floor_position_y += self.set_point_floor_y_adder
+            rospy.sleep(0.05)
+            if self.set_point_floor_y > 0 and self.floor_position_y >= self.set_point_floor_y or self.set_point_floor_y < 0 and self.floor_position_y <= self.set_point_floor_y:
+                self.floor_position_y -= self.set_point_floor_y_adder
+                self.floor_position_y += self.resudial_floor_y
+                self.floor.setPosition(self.floor_position_y, self.floor_position_x)
+                rospy.sleep(0.05)
+                # print("floor x: {:.3f}, y: {:.3f}".format(self.floor_position_x, self.floor_position_y))
+                break
     
 
     def saveRewardValue(self, my_dict):
