@@ -49,29 +49,29 @@ class OpedTrainer:
         self.floor_position_y = 0
 
 
-        # if np.random.rand() <= 0.5:
-        if self.lift == True:
-            self.set_point_floor_x = np.random.uniform(1.0, 20.0)
+        if np.random.rand() <= 0.5:
+        # if self.lift == True:
+            self.set_point_floor_x = np.random.uniform(1.0, 10.0)
             self.set_point_floor_x_adder = 1.0
             self.resudial_floor_x = self.set_point_floor_x % 1
             self.lift = False
         else:
-            self.set_point_floor_x = -np.random.uniform(1.0, 20.0)
+            self.set_point_floor_x = -np.random.uniform(1.0, 10.0)
             self.resudial_floor_x = -((-self.set_point_floor_x) % 1)
             self.set_point_floor_x_adder = -1.0
             self.lift = True
 
-        # if np.random.rand() <= 0.5:
+        if np.random.rand() <= 0.5:
         # if self.lift == True:
-        #     self.set_point_floor_y = np.random.uniform(5.0, 20.0)
-        #     self.set_point_floor_y_adder = 1.0
-        #     self.resudial_floor_y = self.set_point_floor_y % 1
-        #     self.lift = False
-        # else:
-        #     self.set_point_floor_y = -np.random.uniform(5.0, 20.0)
-        #     self.resudial_floor_y = -((-self.set_point_floor_y) % 1)
-        #     self.set_point_floor_y_adder = -1.0
-        #     self.lift = True
+            self.set_point_floor_y = np.random.uniform(5.0, 10.0)
+            self.set_point_floor_y_adder = 1.0
+            self.resudial_floor_y = self.set_point_floor_y % 1
+            self.lift = False
+        else:
+            self.set_point_floor_y = -np.random.uniform(5.0, 10.0)
+            self.resudial_floor_y = -((-self.set_point_floor_y) % 1)
+            self.set_point_floor_y_adder = -1.0
+            self.lift = True
         
         # print("set_point_floor x: {:.3f}, y: {:.3f}".format(self.set_point_floor_x, self.set_point_floor_y))
 
@@ -177,27 +177,27 @@ class OpedTrainer:
                             0: imu 0
                             1: imu minus -28.9348
                         """
-                        # action_y = self.agent.action(discrete_state_y, is_y=True)
+                        action_y = self.agent.action(discrete_state_y, is_y=True)
                         action_x = self.agent.action(discrete_state_x, is_y=False)
-                        action_y = 0
+                        # action_y = 0
                         # action_x = 0
 
                         next_state_y, next_state_x, reward_y, reward_x, done = self.oped.step(action_y, action_x)
                         new_discrete_state_y = self.agent.getDiscreteState(next_state_y)
                         new_discrete_state_x = self.agent.getDiscreteState(next_state_x)
-                        episode_reward = episode_reward + reward_x #+ reward_y
+                        episode_reward = episode_reward + reward_x + reward_y
 
                         # if index < 450 :
                         # self.floorStep()
                         # print(next_state_y, action_y, reward_y)
-                        # print("sx:[{:.2f}, {:.2f}], sy:[{:.2f}, {:.2f}], ax:{}, ay:{}, rx:{:.2f}, ry:{:.2f}".format(
-                        #     next_state_x[0], next_state_x[1], next_state_y[0], next_state_y[1], action_x, action_y, reward_x, reward_y))
+                        print("sx:[{:.2f}, {:.2f}], sy:[{:.2f}, {:.2f}], ax:{}, ay:{}, rx:{:.2f}, ry:{:.2f}".format(
+                            next_state_x[0], next_state_x[1], next_state_y[0], next_state_y[1], action_x, action_y, reward_x, reward_y))
                         # print(self.oped.getInfo())
                         # print(self.floor_position_y)
                         index += 1
-                        if not done:
+                        # if not done:
                             # self.agent.updateModel(discrete_state_y, new_discrete_state_y, action_y, reward_y, is_y=True)
-                            self.agent.updateModel(discrete_state_x, new_discrete_state_x, action_x, reward_x, is_y=False)
+                            # self.agent.updateModel(discrete_state_x, new_discrete_state_x, action_x, reward_x, is_y=False)
                         
                         rate.sleep()    
                         discrete_state_y = new_discrete_state_y
@@ -218,8 +218,8 @@ class OpedTrainer:
                         print("Episode: {}, average reward: {}, cur_max: {}".format(index_episode, average_reward, self.max_avg_reward))
                         ep_rewards = []
                         if(average_reward > self.max_avg_reward):
-                            self.agent.saveModel()
-                            self.saveRewardValue(aggr_ep_rewards)
+                            # self.agent.saveModel()
+                            # self.saveRewardValue(aggr_ep_rewards)
                             self.max_avg_reward = average_reward
 
                 else:
@@ -227,8 +227,8 @@ class OpedTrainer:
                     break
 
         finally:
-            self.agent.saveModel()
-            self.saveRewardValue(aggr_ep_rewards)
+        #     self.agent.saveModel()
+        #     self.saveRewardValue(aggr_ep_rewards)
 
             plt.plot(aggr_ep_rewards['ep'], aggr_ep_rewards['avg'], label="average rewards")
             plt.plot(aggr_ep_rewards['ep'], aggr_ep_rewards['max'], label="max rewards")

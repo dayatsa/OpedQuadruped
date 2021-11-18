@@ -21,7 +21,7 @@ class Agent():
         self.is_weight_backup   = True
         self.WEIGHT_BACKUP      = "/home/dayatsa/data/skipsi/opedd_ws/src/OpedQuadruped/oped/oped_teleopp/model/"
         self.WEIGHT_LOAD_Y      = "/home/dayatsa/data/skipsi/opedd_ws/src/OpedQuadruped/oped/oped_teleopp/model/y/model_y_14-11-2021_04:33.npy"
-        self.WEIGHT_LOAD_X      = "/home/dayatsa/data/skipsi/opedd_ws/src/OpedQuadruped/oped/oped_teleopp/model/x/model_x_16-11-2021_14:29.npy"
+        self.WEIGHT_LOAD_X      = "/home/dayatsa/data/skipsi/opedd_ws/src/OpedQuadruped/oped/oped_teleopp/model/x/model_x_17-11-2021_11:56.npy"
         self.STATE_SIZE         = state_size
         self.ACTION_SIZE        = action_size
         self.LEARNING_RATE      = 0.1
@@ -78,8 +78,8 @@ class Agent():
 
             """
             # self.END_EXPLORATION_DECAY = 560
-            self.exploration_rate = 0.637925585117
-            # self.exploration_rate = self.EXPLORATION_MIN
+            # self.exploration_rate = 0.637925585117
+            self.exploration_rate = self.EXPLORATION_MIN
         print(q_table.shape)
         return q_table
     
