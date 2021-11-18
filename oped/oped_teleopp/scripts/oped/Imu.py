@@ -6,7 +6,7 @@ import math
 class Imu(object):
     def __init__(self):
         self.mpu = mpu6050(0x68)
-        self.alpha = 0.5
+        self.alpha = 0.05
 
         self.accel_data = [0.0, 0.0, 0.0]
         self.accel_data_filter = [0.0, 0.0, 0.0]
@@ -20,7 +20,7 @@ class Imu(object):
         self.error_estimation = [2.0, 2.0]
         self.kalman_gain = [0.0, 0.0]
 
-        self.LIMIT_UPRIGHT = 0.5
+        self.LIMIT_UPRIGHT = 2
         self.IMU_MIN_DEGREE = -35
         self.IMU_MAX_DEGREE = 35
 
@@ -72,4 +72,8 @@ class Imu(object):
 
     def getImuData(self):
         pitch, roll = self.getPitchRoll()
+        if pitch >= -self.LIMIT_UPRIGHT and pitch <= self.LIMIT_UPRIGHT:
+            pitch = 0
+        if roll >= -self.LIMIT_UPRIGHT and roll <= self.LIMIT_UPRIGHT:
+            roll = 0
         return roll, pitch, 0

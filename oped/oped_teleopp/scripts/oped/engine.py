@@ -157,7 +157,7 @@ class OpedEngine:
 if __name__ == "__main__":
     print(os.getcwd())
     rospy.init_node('engine', anonymous=True)
-    rate = rospy.Rate(25) # 
+    rate = rospy.Rate(30) # 
     oped_agent = OpedEngine()
     oped_agent.run()
 

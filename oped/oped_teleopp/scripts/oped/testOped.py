@@ -6,28 +6,36 @@ from std_msgs.msg import String
 
 from Imu import *
 from Leg import *
+from Agent import *
+from QuadrupedController import *
 
 
-imu = Imu()
-oped = Leg()
+
+EPISODES          = 5000
+oped              = QuadrupedController()
+STATE_SPACE       = oped.STATE_SPACE
+ACTION_SIZE       = oped.ACTION_N
+MAX_EPISODE       = oped.MAX_EPISODE
+STATS_EVERY       = 20
+agent             = Agent(STATE_SPACE, ACTION_SIZE, EPISODES)  
 
 def talker():
 
+    state = [0, 1]
+    discrete_state = agent.getDiscreteState(state)
+    action = agent.action(discrete_state, is_y=True)
+    print(discrete_state)
+    print(action)
+    # while not rospy.is_shutdown():
+    #     # servo.setInitialPosition()
+    #     oped.addPosition(1,0)
+    #     # oped.setInitialPosition()
 
-    rospy.init_node('talker', anonymous=True)
-    rate = rospy.Rate(50) # 10hz
-    time.sleep(2)
+    #     pitch, roll = imu.getPitchRoll()
+    #     print("pitch: {}, roll: {}".format(pitch, roll))
+    #     print()
 
-    while not rospy.is_shutdown():
-        # servo.setInitialPosition()
-        oped.addPosition(1,0)
-        # oped.setInitialPosition()
-
-        pitch, roll = imu.getPitchRoll()
-        print("pitch: {}, roll: {}".format(pitch, roll))
-        print()
-
-        rate.sleep()
+    #     rate.sleep()
 
 if __name__ == '__main__':
     try:

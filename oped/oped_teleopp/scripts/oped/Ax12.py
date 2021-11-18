@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from dynamixel_sdk import *  # Uses Dynamixel SDK library
+import time
 
 # Control table ADDRess for AX-12
 # EEPROM REGISTER ADDRESSES - Permanently stored in memory once changed
@@ -120,7 +121,7 @@ class Ax12:
             print("SyncWrite Succeeded")
             
         self.groupSyncWrite.clearParam()
-        # time.sleep(0.2)
+        time.sleep(0.005)
         # print("SyncWrite Succeeded")
 
 
