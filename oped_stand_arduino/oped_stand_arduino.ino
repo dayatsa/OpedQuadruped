@@ -1,12 +1,30 @@
 // (c) Michael Schoeffler 2017, http://www.mschoeffler.de
 
 #include "Wire.h" // This library allows you to communicate with I2C devices.
+#include <SPI.h>
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+
+#define OLED_RESET 4
+Adafruit_SSD1306 display(OLED_RESET);
+
+#define NUMFLAKES 10
+#define XPOS 0
+#define YPOS 1
+#define DELTAY 2
+
+#define LOGO16_GLCD_HEIGHT 16
+#define LOGO16_GLCD_WIDTH  16
+
+#define ALPHA  0.4
 
 const int MPU_ADDR = 0x68; // I2C address of the MPU-6050. If AD0 pin is set to HIGH, the I2C address will be 0x69.
 
 int16_t accelerometer_x, accelerometer_y, accelerometer_z; // variables for accelerometer raw data
 int16_t gyro_x, gyro_y, gyro_z; // variables for gyro raw data
 int16_t temperature; // variables for temperature data
+float filtered_accelerometer_x, filtered_accelerometer_y, filtered_accelerometer_z;
 
 char tmp_str[7]; // temporary variable used in convert function
 
@@ -15,53 +33,49 @@ char* convert_int16_to_str(int16_t i) { // converts int16 to string. Moreover, r
   return tmp_str;
 }
 
+float pitch = 0, roll = 0;
+
+static const unsigned char PROGMEM logo16_glcd_bmp[] =
+{ B00000000, B11000000,
+  B00000001, B11000000,
+  B00000001, B11000000,
+  B00000011, B11100000,
+  B11110011, B11100000,
+  B11111110, B11111000,
+  B01111110, B11111111,
+  B00110011, B10011111,
+  B00011111, B11111100,
+  B00001101, B01110000,
+  B00011011, B10100000,
+  B00111111, B11100000,
+  B00111111, B11110000,
+  B01111100, B11110000,
+  B01110000, B01110000,
+  B00000000, B00110000
+};
+
+#if (SSD1306_LCDHEIGHT != 32)
+#error("Height incorrect, please fix Adafruit_SSD1306.h!");
+#endif
+
+
 void setup() {
   Serial.begin(9600);
-  Wire.begin();
-  Wire.beginTransmission(MPU_ADDR); // Begins a transmission to the I2C slave (GY-521 board)
-  Wire.write(0x6B); // PWR_MGMT_1 register
-  Wire.write(0); // set to zero (wakes up the MPU-6050)
-  Wire.endTransmission(true);
+  //  imuInit();
+  oledInit();
+  printImu(-82.34, -45.74);
 }
 void loop() {
-  Wire.beginTransmission(MPU_ADDR);
-  Wire.write(0x3B); // starting with register 0x3B (ACCEL_XOUT_H) [MPU-6000 and MPU-6050 Register Map and Descriptions Revision 4.2, p.40]
-  Wire.endTransmission(false); // the parameter indicates that the Arduino will send a restart. As a result, the connection is kept active.
-  Wire.requestFrom(MPU_ADDR, 7*2, true); // request a total of 7*2=14 registers
-  
-  // "Wire.read()<<8 | Wire.read();" means two registers are read and stored in the same variable
-  accelerometer_x = Wire.read()<<8 | Wire.read(); // reading registers: 0x3B (ACCEL_XOUT_H) and 0x3C (ACCEL_XOUT_L)
-  accelerometer_y = Wire.read()<<8 | Wire.read(); // reading registers: 0x3D (ACCEL_YOUT_H) and 0x3E (ACCEL_YOUT_L)
-  accelerometer_z = Wire.read()<<8 | Wire.read(); // reading registers: 0x3F (ACCEL_ZOUT_H) and 0x40 (ACCEL_ZOUT_L)
-  temperature = Wire.read()<<8 | Wire.read(); // reading registers: 0x41 (TEMP_OUT_H) and 0x42 (TEMP_OUT_L)
-  gyro_x = Wire.read()<<8 | Wire.read(); // reading registers: 0x43 (GYRO_XOUT_H) and 0x44 (GYRO_XOUT_L)
-  gyro_y = Wire.read()<<8 | Wire.read(); // reading registers: 0x45 (GYRO_YOUT_H) and 0x46 (GYRO_YOUT_L)
-  gyro_z = Wire.read()<<8 | Wire.read(); // reading registers: 0x47 (GYRO_ZOUT_H) and 0x48 (GYRO_ZOUT_L)
-  
-  // print out data
-//  Serial.print("aX = "); Serial.print(convert_int16_to_str(accelerometer_x));
-//  Serial.print(" | aY = "); Serial.print(convert_int16_to_str(accelerometer_y));
-//  Serial.print(" | aZ = "); Serial.print(convert_int16_to_str(accelerometer_z));
-//  // the following equation was taken from the documentation [MPU-6000/MPU-6050 Register Map and Description, p.30]
-//  Serial.print(" | tmp = "); Serial.print(temperature/340.00+36.53);
-//  Serial.print(" | gX = "); Serial.print(convert_int16_to_str(gyro_x));
-//  Serial.print(" | gY = "); Serial.print(convert_int16_to_str(gyro_y));
-//  Serial.print(" | gZ = "); Serial.print(convert_int16_to_str(gyro_z));
-//  Serial.println();
-
-  
-  // Calculate Pitch & Roll
-  float pitch = -(atan2((float)accelerometer_x, sqrt((float)accelerometer_y*(float)accelerometer_y + (float)accelerometer_z*(float)accelerometer_z))*180.0)/M_PI;
-  float roll = (atan2((float)accelerometer_y, (float)accelerometer_z)*180.0)/M_PI;
+  readPitchRoll();
+  printImu(pitch, roll);
 
   // Output
   Serial.print(" Pitch = ");
   Serial.print(pitch);
   Serial.print("\tRoll = ");
   Serial.print(roll);
-  
   Serial.println();
-  
+
   // delay
-  delay(10);
+  delay(20);
 }
