@@ -186,12 +186,7 @@ class Quadruped(Leg, MyImu) :
         return str(self.x + ", " + self.y + ", " + self.z)
 
 
-    def step(self, choice1, choice2):
-        '''
-        Gives us 3 total movement options.
-        '''
-        self.episode_step += 1
-
+    def interpretAction(self, choice1, choice2):
         step_y = 0
         step_x = 0
 
@@ -209,33 +204,23 @@ class Quadruped(Leg, MyImu) :
         elif choice2 == 2:
             step_x = 1
 
-        self.addPosition(step_y, step_x)  
+        return step_y, step_x
 
+
+    def computeReward(self):
         new_state_imu = self.getImuData()
         y = new_state_imu[1]
         x = new_state_imu[0]
 
-        #reward
         reward_y = 0
         reward_x = 0
+        done = False
 
         if y > -self.LIMIT_UPRIGHT and y < self.LIMIT_UPRIGHT:
             reward_y += 10
-        # else:
-        #     if y < 0:
-        #         reward_y += y
-        #     else:
-        #         reward_y -= y
-        
         if x > -self.LIMIT_UPRIGHT and x < self.LIMIT_UPRIGHT:
             reward_x += 10
-        # else:
-        #     if x < 0:
-        #         reward_x += x
-        #     else:
-        #         reward_x -= x
 
-        done = False
         if (x < self.IMU_MIN_DEGREE or x > self.IMU_MAX_DEGREE):
             done = True
             rospy.loginfo("x imu")
@@ -246,7 +231,19 @@ class Quadruped(Leg, MyImu) :
             done = True
             rospy.loginfo("max_episode")
 
-        # rospy.loginfo("Step" + str(self.episode_step) + " : " + str(done))
+        return reward_y, reward_x, done
+
+
+    def step(self, choice1, choice2):
+        '''
+        Gives us 3 total movement options.
+        '''
+        self.episode_step += 1
+
+        step_y, step_x = self.interpretAction(choice1, choice2)
+        self.addPosition(step_y, step_x)  
+        reward_y, reward_x, done = self.computeReward()
+
         return self.getStateY(), self.getStateX(), reward_y, reward_x, done
 
 
