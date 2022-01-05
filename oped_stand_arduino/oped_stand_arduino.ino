@@ -17,7 +17,7 @@ Adafruit_SSD1306 display(OLED_RESET);
 #define LOGO16_GLCD_HEIGHT 16
 #define LOGO16_GLCD_WIDTH  16
 
-#define ALPHA  0.4
+#define ALPHA  0.2
 
 const int MPU_ADDR = 0x68; // I2C address of the MPU-6050. If AD0 pin is set to HIGH, the I2C address will be 0x69.
 
@@ -61,9 +61,10 @@ static const unsigned char PROGMEM logo16_glcd_bmp[] =
 
 void setup() {
   Serial.begin(9600);
-  //  imuInit();
+  imuInit();
   oledInit();
-  printImu(-82.34, -45.74);
+  printImu(-99.99, -99.99);
+  delay(1000);
 }
 void loop() {
   readPitchRoll();

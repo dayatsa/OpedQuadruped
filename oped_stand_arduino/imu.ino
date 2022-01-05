@@ -27,6 +27,9 @@ void readPitchRoll() {
   // Calculate Pitch & Roll
   pitch = -(atan2((float)filtered_accelerometer_x, sqrt((float)filtered_accelerometer_y * (float)filtered_accelerometer_y + (float)filtered_accelerometer_z * (float)filtered_accelerometer_z)) * 180.0) / M_PI;
   roll = (atan2((float)filtered_accelerometer_y, (float)filtered_accelerometer_z) * 180.0) / M_PI;
+
+  pitch = pitch * 1.28082915164085 + 1.94686031049409;
+  roll = roll * 1.214071024 - 5.05862926724484;
 }
 
 
