@@ -118,7 +118,7 @@ class OpedTrainer:
 
     def saveRewardValue(self, my_dict):
         self.now = datetime.now()
-        dt_string = self.now.strftime("%d-%m-%Y_%H:%M")
+        dt_string = self.now.strftime("%d-%m-%Y_%H-%M")
 
         dict_model   = {"lr":self.agent.LEARNING_RATE,
                         "gamma":self.agent.GAMMA,
