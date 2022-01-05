@@ -19,8 +19,8 @@ class Agent():
     def __init__(self, state_size, action_size, episodes):
         self.is_weight_backup   = True
         self.WEIGHT_BACKUP      = "/home/pi/oped_ws/src/OpedQuadruped/oped/oped_teleopp/model/"
-        self.WEIGHT_LOAD_Y      = "/home/pi/oped_ws/src/OpedQuadruped/oped/oped_teleopp/model/y/model_y_14-11-2021_04:33.npy"
-        self.WEIGHT_LOAD_X      = "/home/pi/oped_ws/src/OpedQuadruped/oped/oped_teleopp/model/x/model_x_17-11-2021_11:56.npy"
+        self.WEIGHT_LOAD_Y      = "/home/pi/oped_ws/src/OpedQuadruped/oped/oped_teleopp/model/y/model_y_14-11-2021_04-33.npy"
+        self.WEIGHT_LOAD_X      = "/home/pi/oped_ws/src/OpedQuadruped/oped/oped_teleopp/model/x/model_x_17-11-2021_11-56.npy"
         self.STATE_SIZE         = state_size
         self.ACTION_SIZE        = action_size
         self.LEARNING_RATE      = 0.1
@@ -81,7 +81,7 @@ class Agent():
 
     def saveModel(self):
         now = datetime.now()
-        dt_string = now.strftime("%d-%m-%Y_%H:%M")
+        dt_string = now.strftime("%d-%m-%Y_%H-%M")
         np.save(self.WEIGHT_BACKUP + "y/model_y_" + dt_string + ".npy", self.q_table_y)
         # np.save(self.WEIGHT_BACKUP + "x/model_x_" + dt_string + ".npy", self.q_table_x)
 
