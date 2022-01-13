@@ -66,7 +66,8 @@ class Imu(object):
         
         # # self.pitch, self.roll 
         # _, _ = self.kalmanFilter(self.pitch, self.roll)
-
+        self.pitch = self.pitch * 1.28082915164085 + 1.94686031049409
+        self.roll = self.roll * 1.214071024 - 5.05862926724484
         return (self.pitch, self.roll)
 
 

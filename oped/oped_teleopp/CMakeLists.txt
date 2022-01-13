@@ -14,8 +14,9 @@ catkin_install_python(PROGRAMS
   scripts/train/floor_controller.py 
   scripts/train/quadruped_controller.py 
   scripts/train/set_action.py 
-  scripts/train/train.py 
+  scripts/train/train.py  
+  scripts/train/testingTrain.py 
   scripts/oped/engine.py 
-  scripts/oped/testOped.py 
+  scripts/oped/testingOped.py 
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )

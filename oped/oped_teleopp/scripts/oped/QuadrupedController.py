@@ -11,7 +11,7 @@ class QuadrupedController(Leg, Imu) :
         self.MODEL_URDF = '/home/dayatsa/model_editor_models/oped/src/oped/oped_description/urdf/oped.urdf'
         self.ACTION_N = 3
         self.STATE_SPACE = 2
-        self.MAX_EPISODE = 500
+        self.MAX_EPISODE = 300
         self.episode_step = 0
         Leg.__init__(self)
         Imu.__init__(self)
