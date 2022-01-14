@@ -14,21 +14,22 @@ class ServoController(object):
         self.FEMUR_ADDER = 21.772396214
         self.TIBIA_ADDER = 28.647889755
 
-        # self.lf_coxa = Ax12(3)
-        # self.lf_femur = Ax12(4)
-        # self.lf_tibia = Ax12(5)
+        self.lf_coxa = Ax12(3)
+        self.lf_femur = Ax12(4)
+        self.lf_tibia = Ax12(5)
 
-        # self.lh_coxa = Ax12(9)
-        # self.lh_femur = Ax12(10)
-        # self.lh_tibia = Ax12(11)
+        self.lh_coxa = Ax12(9)
+        self.lh_femur = Ax12(10)
+        self.lh_tibia = Ax12(11)
 
-        # self.rf_coxa = Ax12(0)
-        # self.rf_femur = Ax12(1)
-        # self.rf_tibia = Ax12(2)
+        self.rf_coxa = Ax12(0)
+        self.rf_femur = Ax12(1)
+        self.rf_tibia = Ax12(2)
 
-        # self.rh_coxa = Ax12(6)
-        # self.rh_femur = Ax12(7)
-        # self.rh_tibia = Ax12(8)
+        self.rh_coxa = Ax12(6)
+        self.rh_femur = Ax12(7)
+        self.rh_tibia = Ax12(8)
+        
         self.servo = Ax12([3,4,5,9,10,11,0,1,2,6,7,8])
 
         self.setMovingSpeed(100)
@@ -56,6 +57,18 @@ class ServoController(object):
 
     def setMovingSpeed(self, speed):
         """set moving speed dynamixel"""
+        self.lf_coxa.set_moving_speed(speed)
+        self.lf_femur.set_moving_speed(speed)
+        self.lf_tibia.set_moving_speed(speed)
+        self.lh_coxa.set_moving_speed(speed)
+        self.lh_femur.set_moving_speed(speed)
+        self.lh_tibia.set_moving_speed(speed)
+        self.rf_coxa.set_moving_speed(speed)
+        self.rf_femur.set_moving_speed(speed)
+        self.rf_tibia.set_moving_speed(speed)
+        self.rh_coxa.set_moving_speed(speed)
+        self.rh_femur.set_moving_speed(speed)
+        self.rh_tibia.set_moving_speed(speed)
         self.servo.set_moving_speed(speed)
 
 
@@ -87,7 +100,7 @@ class ServoController(object):
         self.deg2raw()
 
 
-    def setGoalPosition(self, data):
+    def setGoalPosition(self, data, is_sync):
         """set goal position\n
            input list with row x column: 4x3
         """
@@ -98,9 +111,27 @@ class ServoController(object):
             for j in range(3):
                 data_send.append(self.goal_position_raw[i][j])
 
-        self.servo.syncWriteJoints(data_send)
+        if is_sync:
+            self.servo.syncWriteJoints(data_send)
+        else:
+            self.sendManual(data_send)
 
 
+    def sendManual(self, data):
+        self.lf_coxa.set_goal_position(data[0][0])
+        self.lf_femur.set_goal_position(data[0][1])
+        self.lf_tibia.set_goal_position(data[0][2])
+        self.lh_coxa.set_goal_position(data[1][0])
+        self.lh_femur.set_goal_position(data[1][1])
+        self.lh_tibia.set_goal_position(data[1][2])
+        self.rf_coxa.set_goal_position(data[2][0])
+        self.rf_femur.set_goal_position(data[2][1])
+        self.rf_tibia.set_goal_position(data[2][2])
+        self.rh_coxa.set_goal_position(data[3][0])
+        self.rh_femur.set_goal_position(data[3][1])
+        self.rh_tibia.set_goal_position(data[3][2])
+
+True
     def setInitialPosition(self):        
         data = [[0.0, 0.0, 0.0],
                 [0.0, 0.0, 0.0],
