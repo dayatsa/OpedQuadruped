@@ -1,4 +1,5 @@
 import __future__
+import time
 from Ax12 import Ax12
 
 
@@ -69,7 +70,7 @@ class ServoController(object):
         self.rh_coxa.set_moving_speed(speed)
         self.rh_femur.set_moving_speed(speed)
         self.rh_tibia.set_moving_speed(speed)
-        self.servo.set_moving_speed(speed)
+        # self.servo.set_moving_speed(speed)
 
 
     def deg2raw(self):
@@ -106,15 +107,14 @@ class ServoController(object):
         """
         self.setPointCalibration(data)
 
-        data_send = []
-        for i in range(4):
-            for j in range(3):
-                data_send.append(self.goal_position_raw[i][j])
-
         if is_sync:
+            data_send = []
+            for i in range(4):
+                for j in range(3):
+                    data_send.append(self.goal_position_raw[i][j])
             self.servo.syncWriteJoints(data_send)
         else:
-            self.sendManual(data_send)
+            self.sendManual(self.goal_position_raw)
 
 
     def sendManual(self, data):
@@ -130,8 +130,9 @@ class ServoController(object):
         self.rh_coxa.set_goal_position(data[3][0])
         self.rh_femur.set_goal_position(data[3][1])
         self.rh_tibia.set_goal_position(data[3][2])
+        time.sleep(3)
 
-True
+
     def setInitialPosition(self):        
         data = [[0.0, 0.0, 0.0],
                 [0.0, 0.0, 0.0],

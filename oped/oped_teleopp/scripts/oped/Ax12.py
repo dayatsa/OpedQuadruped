@@ -93,17 +93,23 @@ class Ax12:
         return reg_data
 
     def set_register2(self, reg_num, reg_value):
-        for idx in self.id:
-            dxl_comm_result, dxl_error = Ax12.packetHandler.write2ByteTxRx(
-                Ax12.portHandler, idx, reg_num, reg_value)
-            # print(idx)
-            Ax12.check_error(dxl_comm_result, dxl_error)
+        # for idx in self.id:
+        #     dxl_comm_result, dxl_error = Ax12.packetHandler.write2ByteTxRx(
+        #         Ax12.portHandler, idx, reg_num, reg_value)
+        #     Ax12.check_error(dxl_comm_result, dxl_error)
+        dxl_comm_result, dxl_error = Ax12.packetHandler.write2ByteTxRx(
+            Ax12.portHandler, self.id, reg_num, reg_value)
+        Ax12.check_error(dxl_comm_result, dxl_error)
 
     def get_register2(self, reg_num_low):
-        for idx in self.id:
-            reg_data, dxl_comm_result, dxl_error = Ax12.packetHandler.read2ByteTxRx(
-                Ax12.portHandler, idx, reg_num_low)
-            Ax12.check_error(dxl_comm_result, dxl_error)
+        # for idx in self.id:
+        #     reg_data, dxl_comm_result, dxl_error = Ax12.packetHandler.read2ByteTxRx(
+        #         Ax12.portHandler, idx, reg_num_low)
+        #     Ax12.check_error(dxl_comm_result, dxl_error)
+        
+        reg_data, dxl_comm_result, dxl_error = Ax12.packetHandler.read2ByteTxRx(
+            Ax12.portHandler, self.id, reg_num_low)
+        Ax12.check_error(dxl_comm_result, dxl_error)
         return reg_data
 
     

@@ -85,7 +85,7 @@ class Leg(ServoController):
         self.last_leg_y = self.leg_y
         self.last_leg_x = self.leg_x
         # print(self.lf, self.lh, self.rf, self.rh)
-        self.setPosition(self.lf, self.lh, self.rf, self.rh, is_sync=True)
+        self.setPosition(self.lf, self.lh, self.rf, self.rh, True)
 
 
     def setPosition(self, lf, lh, rf, rh, is_sync):
@@ -106,7 +106,7 @@ class Leg(ServoController):
                 [rf_hip, rf_upper, rf_lower],
                 [rh_hip, rh_upper, rh_lower]]
 
-        self.setGoalPosition(data, is_sync=is_sync)
+        self.setGoalPosition(data, is_sync)
 
     
     def setInitialPositionMiddle(self):
@@ -116,7 +116,7 @@ class Leg(ServoController):
         self.lh = self.MIDDLE_POSITION
         self.rf = self.MIDDLE_POSITION
         self.rh = self.MIDDLE_POSITION
-        self.setPosition(self.lf, self.lh, self.rf, self.rh, is_sync=False)
+        self.setPosition(self.lf, self.lh, self.rf, self.rh, False)
 
 
     def getLegPosition(self):

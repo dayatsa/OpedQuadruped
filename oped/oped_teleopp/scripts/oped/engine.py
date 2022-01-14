@@ -93,10 +93,18 @@ class OpedEngine:
                     done = False
                     episode_reward = 0
                     index = 0 
-                    while not done:
+                    # while not done:
+                    while True:
+                        """ pitch maju: -36.6 = 32.8 -> -34.3
+                            pitch mundur: 41.3 = -37 -> 37.8
+
+                            roll kiri: -54.3 = -47 -> -48
+                            roll kanan: 43.8 = 40.3 -> 40.4
+
+                        """
                         action_y = self.agent.action(discrete_state_y, is_y=True)
                         action_x = self.agent.action(discrete_state_x, is_y=False)
-                        # action_y = 0
+                        # action_y = 2
                         # action_x = 0
 
                         next_state_y, next_state_x, reward_y, reward_x, done = self.oped.step(action_y, action_x)
@@ -106,7 +114,7 @@ class OpedEngine:
 
                         # if index < 450 :
                         #     self.floorStep()
-                        # print(next_state_y, action_y, reward_y)
+                        print(self.oped.getImuData())
                         print("sx:[{:.2f}, {:.2f}], sy:[{:.2f}, {:.2f}], ax:{}, ay:{}, rx:{:.2f}, ry:{:.2f}".format(
                             next_state_x[0], next_state_x[1], next_state_y[0], next_state_y[1], action_x, action_y, reward_x, reward_y))
                         # index += 1
@@ -157,7 +165,7 @@ class OpedEngine:
 if __name__ == "__main__":
     print(os.getcwd())
     rospy.init_node('engine', anonymous=True)
-    rate = rospy.Rate(30) # 
+    rate = rospy.Rate(50) # 
     oped_agent = OpedEngine()
     oped_agent.run()
 
