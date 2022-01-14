@@ -51,11 +51,19 @@ class OpedTesting:
         index_episode = 0
         try:
             while(True):
-                val = input("Continue? (y/n) : ")
+                val = raw_input("Continue? (y/n) : ")
                 if val == "n":
                     break
                 
                 print()
+                done = False
+                episode_reward_x = 0
+                episode_reward_y = 0
+                index = 0 
+                init_imu_x = 0
+                init_imu_y = 0
+                aggr_ep_rewards = {'index': [], 'imu_x': [], 'imu_y': [], 'servo_x': [], 'servo_y': [], 'act_x': [], 'act_y': []}
+               
                 while(True):
                     print("Reset Environment")
                     state_y, state_x = self.resetEnvironment()
@@ -63,15 +71,12 @@ class OpedTesting:
                     discrete_state_x = self.agent.getDiscreteState(state_x)
                     discrete_state_y = self.agent.getDiscreteState(state_y)
                     print("disecrete_state: ", discrete_state_y, discrete_state_x)
-                    val = input("OK? (y/n)")
+                    val = raw_input("OK? (y/n)")
                     if val == "y":
                         break
                 
                 print("Starting..")
-                done = False
-                episode_reward_x = 0
-                episode_reward_y = 0
-                index = 0 
+
                 aggr_ep_rewards = {'index': [], 'imu_x': [], 'imu_y': [], 'servo_x': [], 'servo_y': [], 'act_x': [], 'act_y': []}
                 while not done:
                     action_x = self.agent.action(discrete_state_x, is_y=False)
@@ -98,11 +103,18 @@ class OpedTesting:
                     discrete_state_y = new_discrete_state_y
                 
                 print("Episode {}, index: {}, # Reward-x:{}, # Reward-y:{}".format(index_episode, index, episode_reward_x, episode_reward_y))
+                val = raw_input("is legs raised? (y/n) : ")
                 dict_model = {"episode":index_episode,
                     "index":index,
+                    "init_imu_x":init_imu_x,
+                    "init_imu_y":init_imu_y,
+                    "last_imu_x":next_state_x[1],
+                    "last_imu_y":next_state_y[1],
                     "reward_x":episode_reward_x,
                     "reward_y":episode_reward_y,
+                    "legs raised":val,
                     "data":aggr_ep_rewards}
+
 
                 ep_rewards.append(dict_model)
                 index_episode+=1

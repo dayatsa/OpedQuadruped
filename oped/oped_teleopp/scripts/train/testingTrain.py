@@ -62,12 +62,12 @@ class OpedTesting:
 
         if np.random.rand() <= 0.5:
         # if self.lift == True:
-            self.set_point_floor_y = np.random.uniform(5.0, 10.0)
+            self.set_point_floor_y = np.random.uniform(1.0, 10.0)
             self.set_point_floor_y_adder = 1.0
             self.resudial_floor_y = self.set_point_floor_y % 1
             self.lift = False
         else:
-            self.set_point_floor_y = -np.random.uniform(5.0, 10.0)
+            self.set_point_floor_y = -np.random.uniform(1.0, 10.0)
             self.resudial_floor_y = -((-self.set_point_floor_y) % 1)
             self.set_point_floor_y_adder = -1.0
             self.lift = True
@@ -117,7 +117,7 @@ class OpedTesting:
         self.now = datetime.now()
         dt_string = self.now.strftime("%d-%m-%Y_%H-%M")
 
-        path = "/home/pi/oped_ws/src/OpedQuadruped/oped/oped_teleopp/rewards/test_train/reward_" + dt_string + ".json"
+        path = "/home/dayatsa/data/skipsi/opedd_ws/src/OpedQuadruped/oped/oped_teleopp/rewards/test_train/reward_" + dt_string + ".json"
         with open(path, 'w') as fp:
             json.dump(my_dict, fp)
 
@@ -127,28 +127,33 @@ class OpedTesting:
         index_episode = 0
         try:
             while(True):
-                val = input("Continue? (y/n) : ")
+                val = raw_input("Continue? (y/n) : ")
                 if val == "n":
                     break
                 
-                print()
-                while(True):
-                    print("Reset Environment")
-                    state_y, state_x = self.resetEnvironment()
-                    print("state: ", state_y, state_x)
-                    discrete_state_x = self.agent.getDiscreteState(state_x)
-                    discrete_state_y = self.agent.getDiscreteState(state_y)
-                    print("disecrete_state: ", discrete_state_y, discrete_state_x)
-                    val = input("OK? (y/n)")
-                    if val == "y":
-                        break
-                
-                print("Starting..")
+                print()               
                 done = False
                 episode_reward_x = 0
                 episode_reward_y = 0
                 index = 0 
+                init_imu_x = 0
+                init_imu_y = 0
                 aggr_ep_rewards = {'index': [], 'imu_x': [], 'imu_y': [], 'servo_x': [], 'servo_y': [], 'act_x': [], 'act_y': []}
+               
+                while(True):
+                    print("Reset Environment")
+                    state_y, state_x = self.resetEnvironment()
+                    print("state: ", state_y, state_x)
+                    init_imu_x = state_x[1]
+                    init_imu_y = state_y[1]
+                    discrete_state_x = self.agent.getDiscreteState(state_x)
+                    discrete_state_y = self.agent.getDiscreteState(state_y)
+                    print("disecrete_state: ", discrete_state_y, discrete_state_x)
+                    val = raw_input("OK? (y/n) : ")
+                    if val == "y":
+                        break
+                
+                print("Starting..")
                 while not done:
                     action_x = self.agent.action(discrete_state_x, is_y=False)
                     action_y = self.agent.action(discrete_state_y, is_y=True)
@@ -174,17 +179,23 @@ class OpedTesting:
                     discrete_state_y = new_discrete_state_y
                 
                 print("Episode {}, index: {}, # Reward-x:{}, # Reward-y:{}".format(index_episode, index, episode_reward_x, episode_reward_y))
+                val = raw_input("is legs raised? (y/n) : ")
                 dict_model = {"episode":index_episode,
                     "index":index,
+                    "init_imu_x":init_imu_x,
+                    "init_imu_y":init_imu_y,
+                    "last_imu_x":next_state_x[1],
+                    "last_imu_y":next_state_y[1],
                     "reward_x":episode_reward_x,
                     "reward_y":episode_reward_y,
+                    "legs raised":val,
                     "data":aggr_ep_rewards}
 
                 ep_rewards.append(dict_model)
                 index_episode+=1
 
         finally:
-            self.saveRewardValue(aggr_ep_rewards)
+            self.saveRewardValue(ep_rewards)
 
 
 if __name__ == "__main__":

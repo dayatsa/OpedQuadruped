@@ -177,9 +177,9 @@ class OpedTrainer:
                             0: imu 0
                             1: imu minus -28.9348
                         """
-                        action_y = self.agent.action(discrete_state_y, is_y=True)
+                        # action_y = self.agent.action(discrete_state_y, is_y=True)
                         action_x = self.agent.action(discrete_state_x, is_y=False)
-                        # action_y = 0
+                        action_y = 1
                         # action_x = 0
 
                         next_state_y, next_state_x, reward_y, reward_x, done = self.oped.step(action_y, action_x)
