@@ -153,13 +153,11 @@ class OpedTrainer:
         try:
             for index_episode in range(self.EPISODES):
                 print()
-                # print("Reset Environment")
                 state_y, state_x = self.resetEnvironment()
                 print("init state: {}, {}".format(state_x, state_y))
                 print("start state: {}, {}".format(self.oped.getStateX(), self.oped.getStateY()))
                 discrete_state_y = self.agent.getDiscreteState(state_y)
                 discrete_state_x = self.agent.getDiscreteState(state_x)
-                # print("disecrete_state: ", discrete_state_y, discrete_state_x)
 
                 self.checkRobot(state_x, state_y)
 
@@ -168,36 +166,31 @@ class OpedTrainer:
                     episode_reward = 0
                     index = 0 
                     while not done:
-                    # while True:
                         """ action y:
                             0: imu 0
-                            1: imu minus -26.77
-                            2: imu plus 26.77
+                            1: imu minus -26.3 = -34.3
+                            2: imu plus 27.03 = 37.8
                             action x:
                             0: imu 0
-                            1: imu minus -28.9348
+                            1: imu minus -28.9348 = -48
+                            2: imu plus 28.9348 = -40.3
                         """
-                        # action_y = self.agent.action(discrete_state_y, is_y=True)
+                        action_y = self.agent.action(discrete_state_y, is_y=True)
                         action_x = self.agent.action(discrete_state_x, is_y=False)
-                        action_y = 1
-                        # action_x = 0
 
                         next_state_y, next_state_x, reward_y, reward_x, done = self.oped.step(action_y, action_x)
                         new_discrete_state_y = self.agent.getDiscreteState(next_state_y)
                         new_discrete_state_x = self.agent.getDiscreteState(next_state_x)
                         episode_reward = episode_reward + reward_x + reward_y
 
-                        # if index < 450 :
-                        # self.floorStep()
-                        # print(next_state_y, action_y, reward_y)
-                        print("sx:[{:.2f}, {:.2f}], sy:[{:.2f}, {:.2f}], ax:{}, ay:{}, rx:{:.2f}, ry:{:.2f}".format(
-                            next_state_x[0], next_state_x[1], next_state_y[0], next_state_y[1], action_x, action_y, reward_x, reward_y))
-                        # print(self.oped.getInfo())
-                        # print(self.floor_position_y)
+                        # print(self.oped.getImuData())
+                        # print("sx:[{:.2f}, {:.2f}], sy:[{:.2f}, {:.2f}], ax:{}, ay:{}, rx:{:.2f}, ry:{:.2f}".format(
+                        #     next_state_x[0], next_state_x[1], next_state_y[0], next_state_y[1], action_x, action_y, reward_x, reward_y))
+
                         index += 1
-                        # if not done:
-                            # self.agent.updateModel(discrete_state_y, new_discrete_state_y, action_y, reward_y, is_y=True)
-                            # self.agent.updateModel(discrete_state_x, new_discrete_state_x, action_x, reward_x, is_y=False)
+                        if not done:
+                            self.agent.updateModel(discrete_state_y, new_discrete_state_y, action_y, reward_y, is_y=True)
+                            self.agent.updateModel(discrete_state_x, new_discrete_state_x, action_x, reward_x, is_y=False)
                         
                         rate.sleep()    
                         discrete_state_y = new_discrete_state_y
@@ -218,8 +211,8 @@ class OpedTrainer:
                         print("Episode: {}, average reward: {}, cur_max: {}".format(index_episode, average_reward, self.max_avg_reward))
                         ep_rewards = []
                         if(average_reward > self.max_avg_reward):
-                            # self.agent.saveModel()
-                            # self.saveRewardValue(aggr_ep_rewards)
+                            self.agent.saveModel()
+                            self.saveRewardValue(aggr_ep_rewards)
                             self.max_avg_reward = average_reward
 
                 else:
@@ -227,8 +220,8 @@ class OpedTrainer:
                     break
 
         finally:
-        #     self.agent.saveModel()
-        #     self.saveRewardValue(aggr_ep_rewards)
+            self.agent.saveModel()
+            self.saveRewardValue(aggr_ep_rewards)
 
             plt.plot(aggr_ep_rewards['ep'], aggr_ep_rewards['avg'], label="average rewards")
             plt.plot(aggr_ep_rewards['ep'], aggr_ep_rewards['max'], label="max rewards")

@@ -26,9 +26,12 @@ class MyImu(object):
 
 
     def imuCallback(self, data):
-        self.orientation_x = data.orientation.x * 2 * self.DEG_PER_RAD * 1.272
-        self.orientation_y = data.orientation.y * 2 * self.DEG_PER_RAD * 1.272
-        self.orientation_z = data.orientation.z * 2 * self.DEG_PER_RAD * 1.272
+        self.orientation_x = data.orientation.x * 2 * self.DEG_PER_RAD
+        self.orientation_y = data.orientation.y * 2 * self.DEG_PER_RAD
+        self.orientation_z = data.orientation.z * 2 * self.DEG_PER_RAD
+
+        self.orientation_x = self.orientation_x * 1.393
+        self.orientation_y = self.orientation_y * 1.337 + 0.5746
 
     
     def getImuData(self):
