@@ -216,6 +216,6 @@ class OpedTesting:
 if __name__ == "__main__":
     print(os.getcwd())
     rospy.init_node('engine', anonymous=True)
-    rate = rospy.Rate(30) # 
+    rate = rospy.Rate(50) # 
     oped_agent = OpedTesting()
     oped_agent.run()

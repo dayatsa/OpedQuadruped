@@ -109,10 +109,13 @@ class Agent():
 
     def action(self, state, is_y):
         if np.random.random() > self.exploration_rate:
-            if is_y:
-                return np.argmax(self.q_table_y[state])
+            if (state[1] >= 29 and state[1] <=31):
+                return 0
             else:
-                return np.argmax(self.q_table_x[state])
+                if is_y:
+                    return np.argmax(self.q_table_y[state])
+                else:
+                    return np.argmax(self.q_table_x[state])
         return np.random.randint(0, self.ACTION_SIZE)
 
 

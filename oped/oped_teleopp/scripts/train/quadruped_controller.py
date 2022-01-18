@@ -11,6 +11,7 @@ from sensor_msgs.msg import Imu
 import roslib; roslib.load_manifest('oped_teleopp')
 import numpy as np
 import rospy
+import time
 
 
 class MyImu(object):
@@ -245,6 +246,7 @@ class Quadruped(Leg, MyImu) :
 
         step_y, step_x = self.interpretAction(choice1, choice2)
         self.addPosition(step_y, step_x)  
+        time.sleep(0.01)
         reward_y, reward_x, done = self.computeReward()
 
         return self.getStateY(), self.getStateX(), reward_y, reward_x, done
