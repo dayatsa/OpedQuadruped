@@ -23,6 +23,9 @@ class MyImu(object):
         self.LIMIT_UPRIGHT = 1
         self.IMU_MIN_DEGREE = -30
         self.IMU_MAX_DEGREE = 30
+        self.orientation_x_filter = 0
+        self.orientation_y_filter = 0
+        self.alpha = 0.5
         imu_subsriber = rospy.Subscriber("/imu_oped/data", Imu, self.imuCallback)
 
 
@@ -34,9 +37,17 @@ class MyImu(object):
         self.orientation_x = self.orientation_x * 1.393
         self.orientation_y = self.orientation_y * 1.337 + 0.5746
 
-    
+        self.filterData()
+
+
+    def filterData(self):
+        self.orientation_x_filter = self.orientation_x * self.alpha + (self.orientation_x_filter * (1.0 - self.alpha))
+        self.orientation_y_filter = self.orientation_y * self.alpha + (self.orientation_y_filter * (1.0 - self.alpha))
+
+
     def getImuData(self):
         return self.orientation_x, self.orientation_y, self.orientation_z
+        # return self.orientation_x_filter, self.orientation_y_filter, self.orientation_z
 
 
 
@@ -246,7 +257,7 @@ class Quadruped(Leg, MyImu) :
 
         step_y, step_x = self.interpretAction(choice1, choice2)
         self.addPosition(step_y, step_x)  
-        time.sleep(0.01)
+        # time.sleep(0.03)
         reward_y, reward_x, done = self.computeReward()
 
         return self.getStateY(), self.getStateX(), reward_y, reward_x, done
