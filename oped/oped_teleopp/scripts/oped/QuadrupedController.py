@@ -50,8 +50,6 @@ class QuadrupedController(Leg, Imu) :
         y = new_state_imu[1]
         x = new_state_imu[0]
 
-        print(new_state_imu)
-
         #reward
         reward_y = 0
         reward_x = 0
@@ -105,7 +103,12 @@ class QuadrupedController(Leg, Imu) :
         data = [self.leg_y, imu_data[1]]
         return data
 
+
     def getStateX(self):
         imu_data = self.getImuData()
         data = [self.leg_x, imu_data[0]]
         return data
+
+
+    def resetEpisode(self):
+        self.episode_step = 0

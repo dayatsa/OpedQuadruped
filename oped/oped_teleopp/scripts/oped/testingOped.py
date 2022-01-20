@@ -32,7 +32,8 @@ class OpedTesting:
 
     def resetEnvironment(self):
         # rospy.sleep(0.2)
-        self.oped.setInitialPosition()
+        self.oped.resetEpisode()
+        self.oped.setInitialPositionMiddle()
         rospy.sleep(0.3)
         return self.oped.getStateY(), self.oped.getStateX()
 
@@ -66,8 +67,11 @@ class OpedTesting:
                
                 while(True):
                     print("Reset Environment")
+                    for i in range(50):
+                        self.oped.getImuData()
                     state_y, state_x = self.resetEnvironment()
                     print("state: ", state_y, state_x)
+                    print(self.oped.getImuData())
                     discrete_state_x = self.agent.getDiscreteState(state_x)
                     discrete_state_y = self.agent.getDiscreteState(state_y)
                     print("disecrete_state: ", discrete_state_y, discrete_state_x)
@@ -98,7 +102,7 @@ class OpedTesting:
                     aggr_ep_rewards['act_y'].append(action_y)
                     index += 1
 
-                    rate.sleep()    
+                    # rate.sleep()    
                     discrete_state_x = new_discrete_state_x
                     discrete_state_y = new_discrete_state_y
                 
@@ -120,12 +124,12 @@ class OpedTesting:
                 index_episode+=1
 
         finally:
-            self.saveRewardValue(aggr_ep_rewards)
+            self.saveRewardValue(ep_rewards)
 
 
 if __name__ == "__main__":
     print(os.getcwd())
     rospy.init_node('engine', anonymous=True)
-    rate = rospy.Rate(30) # 
+    rate = rospy.Rate(50) # 
     oped_agent = OpedTesting()
     oped_agent.run()

@@ -99,7 +99,7 @@ class Ax12:
         #     Ax12.check_error(dxl_comm_result, dxl_error)
         dxl_comm_result, dxl_error = Ax12.packetHandler.write2ByteTxRx(
             Ax12.portHandler, self.id, reg_num, reg_value)
-        Ax12.check_error(dxl_comm_result, dxl_error)
+        Ax12.check_error_id(dxl_comm_result, dxl_error, self.id)
 
     def get_register2(self, reg_num_low):
         # for idx in self.id:
@@ -127,7 +127,7 @@ class Ax12:
             print("SyncWrite Succeeded")
             
         self.groupSyncWrite.clearParam()
-        time.sleep(0.005)
+        time.sleep(0.02)
         # print("SyncWrite Succeeded")
 
 
@@ -376,6 +376,13 @@ class Ax12:
             print("%s" % Ax12.packetHandler.getTxRxResult(comm_result))
         elif dxl_err != 0:
             print("%s" % Ax12.packetHandler.getRxPacketError(dxl_err))
+
+    @staticmethod
+    def check_error_id(comm_result, dxl_err, idx):
+        if comm_result != COMM_SUCCESS:
+            print("%d: %s" % (idx, Ax12.packetHandler.getTxRxResult(comm_result)))
+        elif dxl_err != 0:
+            print("%d: %s" % (idx, Ax12.packetHandler.getRxPacketError(dxl_err)))
 
     @staticmethod
     def raw2deg(delta_raw):

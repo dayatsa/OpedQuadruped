@@ -20,7 +20,7 @@ class Imu(object):
         self.error_estimation = [2.0, 2.0]
         self.kalman_gain = [0.0, 0.0]
 
-        self.LIMIT_UPRIGHT = 2
+        self.LIMIT_UPRIGHT = 1
         self.IMU_MIN_DEGREE = -35
         self.IMU_MAX_DEGREE = 35
 
@@ -75,8 +75,8 @@ class Imu(object):
 
     def getImuData(self):
         pitch, roll = self.getPitchRoll()
-        if pitch >= -self.LIMIT_UPRIGHT and pitch <= self.LIMIT_UPRIGHT:
-            pitch = 0
-        if roll >= -self.LIMIT_UPRIGHT and roll <= self.LIMIT_UPRIGHT:
-            roll = 0
+        # if pitch >= -self.LIMIT_UPRIGHT and pitch <= self.LIMIT_UPRIGHT:
+        #     pitch = 0
+        # if roll >= -self.LIMIT_UPRIGHT and roll <= self.LIMIT_UPRIGHT:
+        #     roll = 0
         return roll, pitch, 0

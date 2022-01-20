@@ -10,6 +10,7 @@ import random
 import os
 import numpy as np
 import json
+import time
 from datetime import datetime
 from Agent import *
 from QuadrupedController import *
@@ -112,7 +113,7 @@ class OpedEngine:
                         new_discrete_state_x = self.agent.getDiscreteState(next_state_x)
                         episode_reward = episode_reward + reward_x + reward_y
 
-                        print(self.oped.getImuData())
+                        # print(self.oped.getImuData())
                         print("sx:[{:.2f}, {:.2f}], sy:[{:.2f}, {:.2f}], ax:{}, ay:{}, rx:{:.2f}, ry:{:.2f}".format(
                             next_state_x[0], next_state_x[1], next_state_y[0], next_state_y[1], action_x, action_y, reward_x, reward_y))
                         # index += 1
@@ -120,7 +121,7 @@ class OpedEngine:
                             # self.agent.updateModel(discrete_state_y, new_discrete_state_y, action_y, reward_y, is_y=True)
                             # self.agent.updateModel(discrete_state_x, new_discrete_state_x, action_x, reward_x, is_y=False)
                         
-                        rate.sleep()    
+                        # rate.sleep()    
                         discrete_state_y = new_discrete_state_y
                         discrete_state_x = new_discrete_state_x
 
