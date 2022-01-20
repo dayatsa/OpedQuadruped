@@ -46,7 +46,8 @@ class MyImu(object):
 
 
     def getImuData(self):
-        return self.orientation_x_filter, self.orientation_y_filter, self.orientation_z
+        return self.orientation_x, self.orientation_y, self.orientation_z
+        # return self.orientation_x_filter, self.orientation_y_filter, self.orientation_z
 
 
 
