@@ -256,7 +256,7 @@ class Quadruped(Leg, MyImu) :
 
         step_y, step_x = self.interpretAction(choice1, choice2)
         self.addPosition(step_y, step_x)  
-        time.sleep(0.03)
+        # time.sleep(0.03)
         reward_y, reward_x, done = self.computeReward()
 
         return self.getStateY(), self.getStateX(), reward_y, reward_x, done

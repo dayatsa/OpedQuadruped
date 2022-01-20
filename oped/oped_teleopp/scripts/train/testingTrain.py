@@ -186,7 +186,7 @@ class OpedTesting:
                         aggr_ep_rewards['act_y'].append(action_y)
                         index += 1
 
-                        # rate.sleep()    
+                        rate.sleep()    
                         discrete_state_x = new_discrete_state_x
                         discrete_state_y = new_discrete_state_y
                     
