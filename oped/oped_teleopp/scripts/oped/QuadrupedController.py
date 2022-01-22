@@ -1,9 +1,13 @@
+#!/usr/bin/env python2
 import __future__
+import rospy
+from std_msgs.msg import String
+from sensor_msgs.msg import Imu
 import rospy
 from Imu import *
 from Leg import *
 
-class QuadrupedController(Leg, Imu) : 
+class QuadrupedController(Leg) : 
     def __init__(self):
         self.x = 0.0
         self.y = 0.0
@@ -13,12 +17,24 @@ class QuadrupedController(Leg, Imu) :
         self.STATE_SPACE = 2
         self.MAX_EPISODE = 300
         self.episode_step = 0
+        self.roll = 0
+        self.pitch = 0
         Leg.__init__(self)
-        Imu.__init__(self)
+        imu_subscriber = rospy.Subscriber("/imu_oped/data", Imu, imuCallback)
+        # Imu.__init__(self)
 
 
     def __str__(self):
         return str(self.x + ", " + self.y + ", " + self.z)
+
+
+    def imuCallback(self, data):
+        self.roll = data.orientation.x
+        self.pitch = data.orientation.y
+
+
+    def getImuData(self):
+        return self.roll, self.pitch, 0
 
 
     def step(self, choice1, choice2):

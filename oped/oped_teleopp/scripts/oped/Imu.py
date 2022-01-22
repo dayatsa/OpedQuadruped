@@ -1,9 +1,14 @@
+#!/usr/bin/env python2
 import __future__
 from mpu6050 import mpu6050
 import math
+import rospy
+from std_msgs.msg import String
+from sensor_msgs.msg import Imu
+from geometry_msgs.msg import Quaternion
 
 
-class Imu(object):
+class ImuOped(object):
     def __init__(self):
         self.mpu = mpu6050(0x68)
         self.alpha = 0.05
@@ -13,16 +18,11 @@ class Imu(object):
         self.roll = 0.0
         self.pitch = 0.0
 
-        # kalman filter
-        self.measurement = [0.0, 0.0]
-        self.error_measurement = [3.0,3.0]
-        self.estimation = [10.0, 10.0]
-        self.error_estimation = [2.0, 2.0]
-        self.kalman_gain = [0.0, 0.0]
-
         self.LIMIT_UPRIGHT = 1
         self.IMU_MIN_DEGREE = -35
         self.IMU_MAX_DEGREE = 35
+
+        self.pub = rospy.Publisher('/imu_oped/data', Imu, queue_size=1)
 
 
     def getAccelData(self):
@@ -30,22 +30,6 @@ class Imu(object):
         self.accel_data[0] = data['x']
         self.accel_data[1] = data['y']
         self.accel_data[2] = data['z']
-
-    
-    def kalmanFilter(self, pitch, roll):
-        self.measurement[0] = pitch
-        self.measurement[1] = roll
-
-        for i in range(2):
-            self.kalman_gain[i] = self.error_estimation[i]/(self.error_estimation[i] + self.error_measurement[i])
-            self.estimation[i] = self.estimation[i] + self.kalman_gain[i]*(self.measurement[i] - self.estimation[i])
-            self.error_estimation[i] = (1 - self.kalman_gain[i])*self.error_estimation[i]
-
-        print(self.kalman_gain)
-        print(self.estimation)
-        print(self.error_estimation)
-        
-        return self.estimation[0], self.estimation[1]
 
     
     def filterData(self):
@@ -80,3 +64,31 @@ class Imu(object):
         # if roll >= -self.LIMIT_UPRIGHT and roll <= self.LIMIT_UPRIGHT:
         #     roll = 0
         return roll, pitch, 0
+
+    
+    def talker(self, rt):
+        rate = rospy.Rate(rt) # 10hz
+        while not rospy.is_shutdown():
+            pitch, roll = self.getPitchRoll()
+
+            imu_msg = Imu()
+            imu_msg.header.stamp = rospy.Time.now()
+
+            orientation = Quaternion()
+            orientation.x = roll
+            orientation.y = pitch
+            orientation.z = 0
+            orientation.w = 0
+
+            imu_msg.orientation = orientation
+            self.pub.publish(imu_msg)
+            # rospy.loginfo(imu_msg)
+            rate.sleep()
+
+
+if __name__ == '__main__':
+    try:
+        myImu = Imu()
+        myImu.talker(50)
+    except rospy.ROSInterruptException:
+        pass

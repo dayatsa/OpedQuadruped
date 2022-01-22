@@ -1,6 +1,11 @@
+#!/usr/bin/env python2
 import __future__
 import time
 from Ax12 import Ax12
+import rospy
+from std_msgs.msg import String
+from trajectory_msgs.msg import JointTrajectory
+from trajectory_msgs.msg import JointTrajectoryPoint
 
 
 class ServoController(object):
@@ -54,6 +59,20 @@ class ServoController(object):
                                     [0, 0, 0],
                                     [0, 0, 0],
                                     [0, 0, 0]]
+        
+        self.raw_positions = []
+
+        joint_subsriber = rospy.Subscriber("/oped/joint_group_position_controller/command", JointTrajectory, self.servoCallback)
+        rospy.spin()
+    
+
+    def servoCallback(self, data):
+        self.raw_positions = data.points[0].positions
+        data = [[self.raw_positions[0], self.raw_positions[1], self.raw_positions[2]],
+                [self.raw_positions[3], self.raw_positions[4], self.raw_positions[5]],
+                [self.raw_positions[6], self.raw_positions[7], self.raw_positions[8]],
+                [self.raw_positions[9], self.raw_positions[10], self.raw_positions[11]]]
+        self.setGoalPosition(data, True):
 
 
     def setMovingSpeed(self, speed):
@@ -142,3 +161,10 @@ class ServoController(object):
         #femur -0.38 = 21.772396214 derajat 
         #tibia +0.5 = 28.647889755 derajat
         self.setGoalPosition(data)
+
+
+if __name__ == '__main__':
+    try:
+        sevo = ServoController()
+    except rospy.ROSInterruptException:
+        pass

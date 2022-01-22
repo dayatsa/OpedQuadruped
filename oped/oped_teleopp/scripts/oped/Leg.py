@@ -1,4 +1,10 @@
+#!/usr/bin/env python2
 import __future__
+import rospy
+from std_msgs.msg import String
+from sensor_msgs.msg import Imu
+from trajectory_msgs.msg import JointTrajectory
+from trajectory_msgs.msg import JointTrajectoryPoint
 import time
 from ServoController import *
 
@@ -24,13 +30,14 @@ class Leg(ServoController):
         self.last_lh = 0.0
         self.last_rf = 0.0
         self.last_rh = 0.0
+        self.leg_position_plot = []
         self.leg_position = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         self.joint_names = ['lf_hip_joint', 'lf_upper_leg_joint', 'lf_lower_leg_joint', 'lh_hip_joint', 'lh_upper_leg_joint', 'lh_lower_leg_joint', 'rf_hip_joint', 'rf_upper_leg_joint', 'rf_lower_leg_joint', 'rh_hip_joint', 'rh_upper_leg_joint', 'rh_lower_leg_joint']
         
         self.setInitialPositionMiddle()
         time.sleep(3)
         self.setMovingSpeed(500)
-        # self.joint_group_publisher = rospy.Publisher('/oped/joint_group_position_controller/command', JointTrajectory, queue_size=1)
+        self.joint_group_publisher = rospy.Publisher('/oped/joint_group_position_controller/command', JointTrajectory, queue_size=1)
         # rospy.init_node('joint_states', anonymous=True)
 
 
@@ -86,6 +93,7 @@ class Leg(ServoController):
         self.last_leg_x = self.leg_x
         # print(self.lf, self.lh, self.rf, self.rh)
         self.setPosition(self.lf, self.lh, self.rf, self.rh, True)
+        self.publishPosition()
 
 
     def setPosition(self, lf, lh, rf, rh, is_sync):
@@ -101,14 +109,29 @@ class Leg(ServoController):
         rh_hip = 0
         rh_upper = -rh
         rh_lower = rh*3/2
-        data = [[lf_hip, lf_upper, lf_lower],
-                [lh_hip, lh_upper, lh_lower],
-                [rf_hip, rf_upper, rf_lower],
-                [rh_hip, rh_upper, rh_lower]]
-
-        self.setGoalPosition(data, is_sync)
+        self.leg_position_plot = [[lf_hip, lf_upper, lf_lower],
+                                [lh_hip, lh_upper, lh_lower],
+                                [rf_hip, rf_upper, rf_lower],
+                                [rh_hip, rh_upper, rh_lower]]
+        self.leg_position = [lf_hip, lf_upper, lf_lower, lh_hip, lh_upper, lh_lower, rf_hip, rf_upper, rf_lower, rh_hip, rh_upper, rh_lower]
 
     
+    def publishPosition(self):
+        joints_msg = JointTrajectory()
+        joints_msg.header.stamp = rospy.Time.now()
+        joints_msg.joint_names = self.joint_names
+
+        point = JointTrajectoryPoint()
+        point.time_from_start = rospy.Duration(1.0 / 60.0)
+        point.positions = self.leg_position #position
+
+        joints_msg.points = [point]
+        # rospy.loginfo(joints_msg)
+        # rospy.loginfo("---")
+
+        self.joint_group_publisher.publish(joints_msg)
+    
+
     def setInitialPositionMiddle(self):
         self.leg_y = 0.0
         self.leg_x = 0.0
@@ -117,6 +140,7 @@ class Leg(ServoController):
         self.rf = self.MIDDLE_POSITION
         self.rh = self.MIDDLE_POSITION
         self.setPosition(self.lf, self.lh, self.rf, self.rh, False)
+        self.setGoalPosition(self.leg_position_plot, False)
 
 
     def getLegPosition(self):
