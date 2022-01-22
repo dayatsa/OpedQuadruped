@@ -112,7 +112,7 @@ class OpedTesting:
         self.now = datetime.now()
         dt_string = self.now.strftime("%d-%m-%Y_%H-%M")
 
-        path = "/home/dayatsa/data/skipsi/opedd_ws/src/OpedQuadruped/oped/oped_teleopp/rewards/test_train/reward_" + dt_string + ".json"
+        path = "/home/dayatsa/data/skipsi/opedd_ws/src/OpedQuadruped/oped/oped_teleopp/rewards/test_train/y/reward_" + dt_string + ".json"
         with open(path, 'w') as fp:
             json.dump(my_dict, fp)
 
@@ -132,8 +132,8 @@ class OpedTesting:
                 break
         ep_rewards = []
         index_episode = 0
-        set_floor_x = [i for i in range(-16,17,2)]
-        set_floor_y = [i for i in range(-16,17,2)]
+        set_floor_x = [0]
+        set_floor_y = [i for i in range(-18,19,2)]
         try:
             # while(True):
             for set_x in set_floor_x:
