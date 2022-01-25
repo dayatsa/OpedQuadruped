@@ -42,7 +42,7 @@ class OpedTesting:
         self.now = datetime.now()
         dt_string = self.now.strftime("%d-%m-%Y_%H-%M")
 
-        path = "/home/pi/oped_ws/src/OpedQuadruped/oped/oped_teleopp/rewards/test_oped/reward_" + dt_string + ".json"
+        path = "/home/pi/oped_ws/src/OpedQuadruped/oped/oped_teleopp/rewards/test_oped/1/reward_" + dt_string + ".json"
         with open(path, 'w') as fp:
             json.dump(my_dict, fp)
 
@@ -85,6 +85,7 @@ class OpedTesting:
                 while not done:
                     action_x = self.agent.action(discrete_state_x, is_y=False)
                     action_y = self.agent.action(discrete_state_y, is_y=True)
+                    # action_x = 0
                     next_state_y, next_state_x, reward_y, reward_x, done = self.oped.step(action_y, action_x)
                     new_discrete_state_x = self.agent.getDiscreteState(next_state_x)
                     new_discrete_state_y = self.agent.getDiscreteState(next_state_y)

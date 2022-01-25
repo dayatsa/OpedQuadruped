@@ -11,7 +11,7 @@ from geometry_msgs.msg import Quaternion
 class ImuOped(object):
     def __init__(self):
         self.mpu = mpu6050(0x68)
-        self.alpha = 0.1
+        self.alpha = 0.07
 
         self.accel_data = [0.0, 0.0, 0.0]
         self.accel_data_filter = [0.0, 0.0, 0.0]

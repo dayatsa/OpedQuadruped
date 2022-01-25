@@ -17,7 +17,7 @@ class QuadrupedController(Leg) :
         self.ACTION_N = 3
         self.STATE_SPACE = 2
         self.MAX_EPISODE = 300
-        self.LIMIT_UPRIGHT = 2
+        self.LIMIT_UPRIGHT = 2.5
         self.IMU_MIN_DEGREE = -35
         self.IMU_MAX_DEGREE = 35
         self.episode_step = 0
@@ -66,7 +66,7 @@ class QuadrupedController(Leg) :
             step_x = -1
 
         self.addPosition(step_y, step_x)  
-        time.sleep(0.02)
+        time.sleep(0.023)
 
         # new_state_imu = self.getImuData()
         new_state_x = self.getStateX()
