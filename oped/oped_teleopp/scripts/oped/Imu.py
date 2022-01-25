@@ -11,7 +11,7 @@ from geometry_msgs.msg import Quaternion
 class ImuOped(object):
     def __init__(self):
         self.mpu = mpu6050(0x68)
-        self.alpha = 0.05
+        self.alpha = 0.1
 
         self.accel_data = [0.0, 0.0, 0.0]
         self.accel_data_filter = [0.0, 0.0, 0.0]
@@ -88,7 +88,8 @@ class ImuOped(object):
 
 if __name__ == '__main__':
     try:
-        myImu = Imu()
+        rospy.init_node('imu_talker', anonymous=True)
+        myImu = ImuOped()
         myImu.talker(50)
     except rospy.ROSInterruptException:
         pass

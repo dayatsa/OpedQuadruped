@@ -77,6 +77,8 @@ class OpedEngine:
     def run(self):
         ep_rewards = []
         aggr_ep_rewards = {'ep': [], 'avg': [], 'max': [], 'min': []}
+        print("masuk")
+        val = raw_input("Waiting servo? (y) : ")
         try:
             for index_episode in range(self.EPISODES):
                 print()
@@ -113,7 +115,6 @@ class OpedEngine:
                         new_discrete_state_x = self.agent.getDiscreteState(next_state_x)
                         episode_reward = episode_reward + reward_x + reward_y
 
-                        # print(self.oped.getImuData())
                         print("sx:[{:.2f}, {:.2f}], sy:[{:.2f}, {:.2f}], ax:{}, ay:{}, rx:{:.2f}, ry:{:.2f}".format(
                             next_state_x[0], next_state_x[1], next_state_y[0], next_state_y[1], action_x, action_y, reward_x, reward_y))
                         # index += 1
@@ -165,7 +166,9 @@ if __name__ == "__main__":
     print(os.getcwd())
     rospy.init_node('engine', anonymous=True)
     rate = rospy.Rate(50) # 
+    print("awal")
     oped_agent = OpedEngine()
+    print("Akhir")
     oped_agent.run()
 
     oped = QuadrupedController()

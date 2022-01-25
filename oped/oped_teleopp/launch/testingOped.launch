@@ -3,7 +3,7 @@
     <node name="imu_talker" pkg="oped_teleopp" type="Imu.py"  output="screen">
     </node>
 
-    <node name="engine" pkg="oped_teleopp" type="engine.py"  output="screen">
+    <node name="testing_oped" pkg="oped_teleopp" type="testingOped.py"  output="screen">
     </node>
 
     <!-- <node name="servo_controller" pkg="oped_teleopp" type="ServoController.py"  output="screen">

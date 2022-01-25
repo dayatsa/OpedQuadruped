@@ -10,7 +10,10 @@ from ServoController import *
 
 class Leg(ServoController):
     def __init__(self):
+
+        print("masuk 2")
         ServoController.__init__(self)
+
         self.RAD_PER_DEG = 0.017453293
         self.MIN_DEGREE = -11.4592
         # self.MAX_DEGREE = 68.7549 #57.2958
@@ -35,7 +38,7 @@ class Leg(ServoController):
         self.joint_names = ['lf_hip_joint', 'lf_upper_leg_joint', 'lf_lower_leg_joint', 'lh_hip_joint', 'lh_upper_leg_joint', 'lh_lower_leg_joint', 'rf_hip_joint', 'rf_upper_leg_joint', 'rf_lower_leg_joint', 'rh_hip_joint', 'rh_upper_leg_joint', 'rh_lower_leg_joint']
         
         self.setInitialPositionMiddle()
-        time.sleep(3)
+        time.sleep(1)
         self.setMovingSpeed(500)
         self.joint_group_publisher = rospy.Publisher('/oped/joint_group_position_controller/command', JointTrajectory, queue_size=1)
         # rospy.init_node('joint_states', anonymous=True)

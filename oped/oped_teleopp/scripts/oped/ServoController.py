@@ -62,17 +62,18 @@ class ServoController(object):
         
         self.raw_positions = []
 
-        joint_subsriber = rospy.Subscriber("/oped/joint_group_position_controller/command", JointTrajectory, self.servoCallback)
-        rospy.spin()
+        
     
 
     def servoCallback(self, data):
+        rospy.loginfo("callback")
+        # rospy.loginfo(data)
         self.raw_positions = data.points[0].positions
         data = [[self.raw_positions[0], self.raw_positions[1], self.raw_positions[2]],
                 [self.raw_positions[3], self.raw_positions[4], self.raw_positions[5]],
                 [self.raw_positions[6], self.raw_positions[7], self.raw_positions[8]],
                 [self.raw_positions[9], self.raw_positions[10], self.raw_positions[11]]]
-        self.setGoalPosition(data, True):
+        self.setGoalPosition(data, True)
 
 
     def setMovingSpeed(self, speed):
@@ -165,6 +166,11 @@ class ServoController(object):
 
 if __name__ == '__main__':
     try:
+        print("masuk servo controller")
+        # time.sleep(3)
+        rospy.init_node('servo_controller', anonymous=True)
         sevo = ServoController()
+        joint_subsriber = rospy.Subscriber("/oped/joint_group_position_controller/command", JointTrajectory, sevo.servoCallback)
+        rospy.spin()
     except rospy.ROSInterruptException:
         pass
