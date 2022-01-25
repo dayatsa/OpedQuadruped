@@ -127,7 +127,7 @@ class Ax12:
             print("SyncWrite Succeeded")
             
         self.groupSyncWrite.clearParam()
-        time.sleep(0.02)
+        time.sleep(0.005)
         # print("SyncWrite Succeeded")
 
 

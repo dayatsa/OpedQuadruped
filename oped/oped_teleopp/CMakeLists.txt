@@ -18,5 +18,6 @@ catkin_install_python(PROGRAMS
   scripts/train/testingTrain.py 
   scripts/oped/engine.py 
   scripts/oped/testingOped.py 
+  scripts/oped/Imu.py 
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )

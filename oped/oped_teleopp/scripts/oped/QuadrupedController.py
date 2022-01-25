@@ -1,9 +1,14 @@
+#!/usr/bin/env python2
 import __future__
+import rospy
+from std_msgs.msg import String
+from sensor_msgs.msg import Imu
+import time
 import rospy
 from Imu import *
 from Leg import *
 
-class QuadrupedController(Leg, Imu) : 
+class QuadrupedController(Leg) : 
     def __init__(self):
         self.x = 0.0
         self.y = 0.0
@@ -12,13 +17,29 @@ class QuadrupedController(Leg, Imu) :
         self.ACTION_N = 3
         self.STATE_SPACE = 2
         self.MAX_EPISODE = 300
+        self.LIMIT_UPRIGHT = 2
+        self.IMU_MIN_DEGREE = -35
+        self.IMU_MAX_DEGREE = 35
         self.episode_step = 0
+        self.roll = 0
+        self.pitch = 0
+        print("masuk 1")
         Leg.__init__(self)
-        Imu.__init__(self)
+        imu_subscriber = rospy.Subscriber("/imu_oped/data", Imu, self.imuCallback)
+        # Imu.__init__(self)
 
 
     def __str__(self):
         return str(self.x + ", " + self.y + ", " + self.z)
+
+
+    def imuCallback(self, data):
+        self.roll = data.orientation.x
+        self.pitch = data.orientation.y
+
+
+    def getImuData(self):
+        return self.roll, self.pitch, 0
 
 
     def step(self, choice1, choice2):
@@ -45,36 +66,29 @@ class QuadrupedController(Leg, Imu) :
             step_x = -1
 
         self.addPosition(step_y, step_x)  
+        time.sleep(0.02)
 
-        new_state_imu = self.getImuData()
-        y = new_state_imu[1]
-        x = new_state_imu[0]
+        # new_state_imu = self.getImuData()
+        new_state_x = self.getStateX()
+        new_state_y = self.getStateY()
+
+        imu_x = new_state_x[1]
+        imu_y = new_state_y[1]
 
         #reward
         reward_y = 0
         reward_x = 0
 
-        if y > -self.LIMIT_UPRIGHT and y < self.LIMIT_UPRIGHT:
-            reward_y += 10
-        # else:
-        #     if y < 0:
-        #         reward_y += y
-        #     else:
-        #         reward_y -= y
-        
-        if x > -self.LIMIT_UPRIGHT and x < self.LIMIT_UPRIGHT:
-            reward_x += 10
-        # else:
-        #     if x < 0:
-        #         reward_x += x
-        #     else:
-        #         reward_x -= x
-
+        if imu_x > -self.LIMIT_UPRIGHT and imu_x < self.LIMIT_UPRIGHT:
+            reward_x = 10
+        if imu_y > -self.LIMIT_UPRIGHT and imu_y < self.LIMIT_UPRIGHT:
+            reward_y = 10
+            
         done = False
-        if (x < self.IMU_MIN_DEGREE or x > self.IMU_MAX_DEGREE):
+        if (imu_x < self.IMU_MIN_DEGREE or imu_x > self.IMU_MAX_DEGREE):
             done = True
             rospy.loginfo("x imu")
-        if (y < self.IMU_MIN_DEGREE or y > self.IMU_MAX_DEGREE):
+        if (imu_y < self.IMU_MIN_DEGREE or imu_y > self.IMU_MAX_DEGREE):
             done = True
             rospy.loginfo("y imu")
         if self.episode_step >= self.MAX_EPISODE:
@@ -82,7 +96,7 @@ class QuadrupedController(Leg, Imu) :
             rospy.loginfo("max_episode")
 
         # rospy.loginfo("Step" + str(self.episode_step) + " : " + str(done))
-        return self.getStateY(), self.getStateX(), reward_y, reward_x, done
+        return new_state_y, new_state_x, reward_y, reward_x, done
 
 
     def getInfo(self):

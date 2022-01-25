@@ -10,6 +10,7 @@ import time
 import random
 import os
 import numpy as np
+from copy import deepcopy
 from datetime import datetime
 from QuadrupedController import *
 from collections      import deque
@@ -42,6 +43,8 @@ class Agent():
         print("Discrete: ", self.discrete_os_win_size)
         self.q_table_y            = self.buildModel(self.WEIGHT_LOAD_Y)
         self.q_table_x            = self.buildModel(self.WEIGHT_LOAD_X)
+        self.counter              = 0
+        self.on_counter           = False
 
 
     def buildModel(self, directory):
@@ -58,7 +61,8 @@ class Agent():
         return q_table
     
 
-    def getDiscreteState(self, state):
+    def getDiscreteState(self, st):
+        state = deepcopy(st)
         if (state[0] > self.MAX_LEG_STATE):
             state[0] = self.MAX_LEG_STATE
         elif (state[0] < -self.MAX_LEG_STATE):
@@ -68,9 +72,19 @@ class Agent():
             state[1] = self.MAX_IMU
         elif (state[1] < -self.MAX_IMU):
             state[1] = -self.MAX_IMU
-        # elif (state[1] > -3 and state[1] < 3):
-        #     state[1] = 0
 
+        elif (state[1] > -3 and state[1] < 3):
+            state[1] = random.uniform(-1,1)
+        #     self.on_counter = True
+        #     # self.counter += 1
+
+        # if self.on_counter == True:
+        #     state[1] = 0
+        #     self.counter += 1
+
+        # if self.counter >= 100:
+        #     self.counter = 0
+        #     self.on_counter = False
         # print(state)    
 
         discrete_state = (state - self.observation_space_low)/self.discrete_os_win_size
