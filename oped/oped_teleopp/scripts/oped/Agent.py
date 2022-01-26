@@ -61,8 +61,8 @@ class Agent():
         return q_table
     
 
-    def getDiscreteState(self, st):
-        state = deepcopy(st)
+    def getDiscreteState(self, state):
+        # state = deepcopy(st)
         if (state[0] > self.MAX_LEG_STATE):
             state[0] = self.MAX_LEG_STATE
         elif (state[0] < -self.MAX_LEG_STATE):
@@ -73,8 +73,8 @@ class Agent():
         elif (state[1] < -self.MAX_IMU):
             state[1] = -self.MAX_IMU
 
-        elif (state[1] > -3 and state[1] < 3):
-            state[1] = random.uniform(-1,1)
+        # elif (state[1] > -3 and state[1] < 3):
+        #     state[1] = random.uniform(-1,1)
         #     self.on_counter = True
         #     # self.counter += 1
 
@@ -102,7 +102,7 @@ class Agent():
 
     def action(self, state, is_y):
         if np.random.random() > self.exploration_rate:
-            if (state[1] >= 29 and state[1] <=31):
+            if (state[1] >= 29 and state[1] <=30):
                 return 0
             else:
                 if is_y:

@@ -5,6 +5,7 @@ from std_msgs.msg import String
 from sensor_msgs.msg import Imu
 import time
 import rospy
+from copy import deepcopy
 from Imu import *
 from Leg import *
 
@@ -17,12 +18,13 @@ class QuadrupedController(Leg) :
         self.ACTION_N = 3
         self.STATE_SPACE = 2
         self.MAX_EPISODE = 300
-        self.LIMIT_UPRIGHT = 2.5
+        self.LIMIT_UPRIGHT = 1
         self.IMU_MIN_DEGREE = -35
         self.IMU_MAX_DEGREE = 35
         self.episode_step = 0
         self.roll = 0
         self.pitch = 0
+        self.last_imu = [0,0]
         print("masuk 1")
         Leg.__init__(self)
         imu_subscriber = rospy.Subscriber("/imu_oped/data", Imu, self.imuCallback)
@@ -65,15 +67,26 @@ class QuadrupedController(Leg) :
         elif choice2 == 2:
             step_x = -1
 
-        self.addPosition(step_y, step_x)  
-        time.sleep(0.023)
+        self.addPosition(step_y, step_x) 
+        if (abs(self.last_imu[0]) < 3 or abs(self.last_imu[1]) < 3):
+            val = abs(self.last_imu[0]) if abs(self.last_imu[0]) < abs(self.last_imu[1]) else abs(self.last_imu[1])
+            if val < 0.1:
+                val = 0.1
+            t = (0.022)/abs(val) + 0.03
+
+            if t > 0.055:
+                t = 0.055
+            time.sleep(t)
+        else:
+            time.sleep(0.02)
 
         # new_state_imu = self.getImuData()
         new_state_x = self.getStateX()
         new_state_y = self.getStateY()
 
-        imu_x = new_state_x[1]
-        imu_y = new_state_y[1]
+        imu_x = deepcopy(new_state_x[1])
+        imu_y = deepcopy(new_state_y[1])
+        self.last_imu = [imu_x, imu_y]
 
         #reward
         reward_y = 0

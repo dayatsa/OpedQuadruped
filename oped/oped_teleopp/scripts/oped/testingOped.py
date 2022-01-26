@@ -42,7 +42,7 @@ class OpedTesting:
         self.now = datetime.now()
         dt_string = self.now.strftime("%d-%m-%Y_%H-%M")
 
-        path = "/home/pi/oped_ws/src/OpedQuadruped/oped/oped_teleopp/rewards/test_oped/1/reward_" + dt_string + ".json"
+        path = "/home/pi/oped_ws/src/OpedQuadruped/oped/oped_teleopp/rewards/test_oped/3/reward_" + dt_string + ".json"
         with open(path, 'w') as fp:
             json.dump(my_dict, fp)
 
