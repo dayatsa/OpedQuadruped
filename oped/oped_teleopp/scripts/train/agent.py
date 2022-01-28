@@ -109,7 +109,7 @@ class Agent():
 
     def action(self, state, is_y):
         if np.random.random() > self.exploration_rate:
-            if (state[1] >= 29 and state[1] <=31):
+            if (state[1] >= 29 and state[1] <=30):
                 return 0
             else:
                 if is_y:

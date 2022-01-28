@@ -8,6 +8,7 @@ from std_srvs.srv import Empty
 from geometry_msgs.msg import Pose, Point, Quaternion
 from gazebo_msgs.srv import SpawnModel, DeleteModel
 from sensor_msgs.msg import Imu
+from copy import deepcopy
 import roslib; roslib.load_manifest('oped_teleopp')
 import numpy as np
 import rospy
@@ -25,7 +26,7 @@ class MyImu(object):
         self.IMU_MAX_DEGREE = 30
         self.orientation_x_filter = 0
         self.orientation_y_filter = 0
-        self.alpha = 0.5
+        self.alpha = 0.3
         imu_subsriber = rospy.Subscriber("/imu_oped/data", Imu, self.imuCallback)
 
 
@@ -193,6 +194,7 @@ class Quadruped(Leg, MyImu) :
         self.STATE_SPACE = 2
         self.MAX_EPISODE = 300
         self.episode_step = 0
+        self.last_imu = [0,0]
         Leg.__init__(self)
         MyImu.__init__(self)
 
@@ -257,8 +259,23 @@ class Quadruped(Leg, MyImu) :
 
         step_y, step_x = self.interpretAction(choice1, choice2)
         self.addPosition(step_y, step_x)  
-        # time.sleep(0.03)
+
+        if (abs(self.last_imu[0]) < 3 or abs(self.last_imu[1]) < 3):
+            val = abs(self.last_imu[0]) if abs(self.last_imu[0]) < abs(self.last_imu[1]) else abs(self.last_imu[1])
+            if val < 0.1:
+                val = 0.1
+            t = (0.022)/abs(val) + 0.03
+
+            if t > 0.055:
+                t = 0.055
+            time.sleep(t)
+        else:
+            time.sleep(0.02)
+
         reward_y, reward_x, done = self.computeReward()
+        imu_x = deepcopy(self.getStateX()[1])
+        imu_y = deepcopy(self.getStateY()[1])
+        self.last_imu = [imu_x, imu_y]
 
         return self.getStateY(), self.getStateX(), reward_y, reward_x, done
 
