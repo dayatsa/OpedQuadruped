@@ -88,7 +88,6 @@ class Agent():
         # print(state)    
 
         discrete_state = (state - self.observation_space_low)/self.discrete_os_win_size
-        discrete_state[0] = 0
         # print(discrete_state)   
         return tuple(discrete_state.astype(np.int))
 
