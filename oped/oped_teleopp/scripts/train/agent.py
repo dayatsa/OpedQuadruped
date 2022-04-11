@@ -96,7 +96,6 @@ class Agent():
             state[1] = -self.MAX_IMU_STATE
 
         discrete_state = (state - self.observation_space_low)/self.discrete_os_win_size
-        discrete_state[0] = 0
         return tuple(discrete_state.astype(np.int))
 
 
